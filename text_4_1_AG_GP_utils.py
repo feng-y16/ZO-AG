@@ -386,5 +386,53 @@ def AG_run(func,x0,y0,step,lr,iter=20,inner_iter=1):
     x_opt,AG_iter_res,AG_time=AG_minmax_bounded_simplex(func,x0,y0,step,lr,bound_x,iter,inner_iter)
     return x_opt,AG_iter_res,AG_time
 
+def Average_run(func,x0,step,lr=0.1,iter=100,Q=10,project=project_bound):
+    D_x=len(x0)
+    bound=2*np.ones((D_x,2))
+    bound[:,0]=-bound[:,1]
+
+    Average_iter_res=np.zeros((iter,len(x0)))
+    Average_time=np.zeros(iter)
+    
+    D=len(x0)
+    x_opt=x0
+    best_f=func(x0)
+    sigma=1
+    flag1=0
+    step = np.min([1.0/iter, step]) ### perturbed input step size
+    for i in range(0,iter):
+        Average_time[i]=time.time()
+        Average_iter_res[i]=x_opt
+        dx=np.zeros(D)
+        for q in range(0,Q):
+            u = np.random.normal(0, sigma, D)
+            u_norm = np.linalg.norm(u)
+            u = u / u_norm
+            grad=D*(func(x_opt+u*step)-func(x_opt))*u/step
+            dx = dx + grad/Q
+        x_temp,flag2=project(x_opt-lr*dx,bound)
+        y_temp=func(x_temp)
+        #print("x_opt=",end="")
+        #print(x_temp)
+        #print("lr=",end="")
+        #print(lr)
+        #print("step=",end="")
+        #print(step)
+        #print("loss=",end="")
+        #print(y_temp)
+        if i%10 == 0:
+            print("ZO-AG for Min-Max: Iter = %d, lr_x=%f, obj = %3.4f" % (i, lr, y_temp) )
+            print("x=",end="")
+            print(x_opt)
+        if y_temp<best_f:
+            best_f=y_temp
+            x_opt=x_temp
+        else:
+            flag1=flag1+1
+            if flag1%3==0:
+                #step=step*0.95
+                lr=lr*0.95
+    return x_opt,Average_iter_res,Average_time
+
 if __name__=="__main__":
     project_simplex([-1,1,3,2,5,-4,6,5.5,5.75,5.875])
