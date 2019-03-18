@@ -72,8 +72,8 @@ def Average_main(train_data,test_data,x_gt=[1,1]):
 
 if __name__=="__main__":
     x_gt=[1,1]
-    #generate_all_dataset(x_gt)#更改x_gt才需要运行
-    #save_train_and_test_data()#更改x_gt才需要运行
+    generate_all_dataset(x_gt)#更改x_gt才需要运行
+    save_train_and_test_data()#更改x_gt才需要运行
 
     train_data,test_data=load_train_and_test_data()
 
