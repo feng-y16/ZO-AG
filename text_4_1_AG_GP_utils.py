@@ -366,22 +366,17 @@ def AG_minmax_bounded_simplex(func,x0,y0,step,lr,bound_x,iter=20,inner_iter=1):
         x_opt=(ZOPSGD_bounded(func_yfixed,x_opt,bound_x,step[0],lr[0],inner_iter))
 
         if i%10 == 0:
-            print("ZO-AG for Min-Max: Iter = %d, obj = %3.4f" % (i, temp_f) )
+            print("ZO-AG for Min-Max: Iter = %d, lr_x=%f, obj = %3.4f" % (i, lr[0], temp_f) )
+            print("x=",end="")
+            print(x_opt)
 
-        #print("ZO-AG for Min-Max: Iter = %d, obj = %3.4f" % (i, temp_f) )
-        #print(x_opt)
-        #print(y_opt)
-        #print(step)
-        #print(lr)
-
-        if temp_f>best_f:
+        if temp_f<best_f:
             best_f=temp_f
         else:
             flag=flag+1
             if flag%3==0:
                 # step[0]=step[0]*0.9
                 lr[0]=lr[0]*0.95
-    #np.savez('AG_time.npz',AG_time=AG_time)
     return x_opt,AG_iter_res,AG_time
 
 def AG_run(func,x0,y0,step,lr,iter=20,inner_iter=1):
@@ -390,9 +385,6 @@ def AG_run(func,x0,y0,step,lr,iter=20,inner_iter=1):
     bound_x[:,0]=-bound_x[:,1]
     x_opt,AG_iter_res,AG_time=AG_minmax_bounded_simplex(func,x0,y0,step,lr,bound_x,iter,inner_iter)
     return x_opt,AG_iter_res,AG_time
-
-def distance_fun(x1,x2):
-    return np.linalg.norm(x1-x2,ord=2)
 
 if __name__=="__main__":
     project_simplex([-1,1,3,2,5,-4,6,5.5,5.75,5.875])
