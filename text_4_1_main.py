@@ -61,7 +61,7 @@ def Average_main(train_data,test_data,x_gt=[1,1]):
     print("##################################################################")
     print("Average method")
     time_start=time.time()
-    x_opt,Average_iter_res,Average_time=Average_run(loss_AG,x0,step=0.01,lr=5e-7,iter=500)
+    x_opt,Average_iter_res,Average_time=Average_run(loss_AG,x0,step=0.01,lr=1e-4,iter=500)
     print("Decision:",end="")
     print(x_opt)
     time_end=time.time()
@@ -71,13 +71,13 @@ def Average_main(train_data,test_data,x_gt=[1,1]):
     return train_data,test_data
 
 if __name__=="__main__":
-    x_gt=[1,1]
+    x_gt=np.ones(100)
     generate_all_dataset(x_gt)#更改x_gt才需要运行
     save_train_and_test_data()#更改x_gt才需要运行
 
     train_data,test_data=load_train_and_test_data()
 
-    #AG_main(train_data,test_data,x_gt=x_gt,lambda_w=1)
+    AG_main(train_data,test_data,x_gt=x_gt,lambda_w=1)
     Average_main(train_data,test_data,x_gt=x_gt)
 
     train_test_time_plot(train_data,test_data)

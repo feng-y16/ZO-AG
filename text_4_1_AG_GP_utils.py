@@ -381,14 +381,14 @@ def AG_minmax_bounded_simplex(func,x0,y0,step,lr,bound_x,iter=20,inner_iter=1):
 
 def AG_run(func,x0,y0,step,lr,iter=20,inner_iter=1):
     D_x=len(x0)
-    bound_x=2*np.ones((D_x,2))
+    bound_x=1000000*np.ones((D_x,2))
     bound_x[:,0]=-bound_x[:,1]
     x_opt,AG_iter_res,AG_time=AG_minmax_bounded_simplex(func,x0,y0,step,lr,bound_x,iter,inner_iter)
     return x_opt,AG_iter_res,AG_time
 
 def Average_run(func,x0,step,lr=0.1,iter=100,Q=10,project=project_bound):
     D_x=len(x0)
-    bound=2*np.ones((D_x,2))
+    bound=1000000*np.ones((D_x,2))
     bound[:,0]=-bound[:,1]
 
     Average_iter_res=np.zeros((iter,len(x0)))
@@ -421,7 +421,7 @@ def Average_run(func,x0,step,lr=0.1,iter=100,Q=10,project=project_bound):
         #print("loss=",end="")
         #print(y_temp)
         if i%10 == 0:
-            print("ZO-AG for Min-Max: Iter = %d, lr_x=%f, obj = %3.4f" % (i, lr, y_temp) )
+            print("Average for Min-Max: Iter = %d, lr_x=%f, obj = %3.4f" % (i, lr, y_temp) )
             print("x=",end="")
             print(x_opt)
         if y_temp<best_f:
