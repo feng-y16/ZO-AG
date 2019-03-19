@@ -2,11 +2,11 @@ from __future__ import print_function
 import numpy as np
 import random
 
-def sign(x):
-    if x<0:
-        return 0
-    else: 
+def sigmoid_truncated(x):
+    if 1/(1+np.exp(-x))>0.5:
         return 1
+    else: 
+        return 0
 
 def generate_data(n,sigma2,x):#单个数据集的生成
     m=len(x)
@@ -15,7 +15,7 @@ def generate_data(n,sigma2,x):#单个数据集的生成
     for i in range(0,n):
         a=np.random.normal(0, sigma, m)
         noise=np.random.normal(0, 1e-3)
-        c=sign((a.T).dot(x)+noise)
+        c=sigmoid_truncated((a.T).dot(x)+noise)
         data[i][0:m]=a
         data[i][m]=c
     return data
