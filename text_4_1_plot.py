@@ -25,7 +25,7 @@ def worst_loss(iter_res,train_data,test_data):
         worst_test_loss[i]=test_worst
     return worst_train_loss,worst_test_loss
 
-def stationary_condition(iter_res,train_data,test_data,lambda_w=1,alpha=1,beta=1):
+def stationary_condition(iter_res,train_data,test_data,lambda_w=1,alpha=1e-4,beta=1e-4):
     iter=np.shape(iter_res)[0]
     D_w=len(train_data)
     D_x=len(train_data[0][0])-1
@@ -39,7 +39,7 @@ def stationary_condition(iter_res,train_data,test_data,lambda_w=1,alpha=1,beta=1
         G[i][D_x:D_x+D_w]=G[i][D_x:D_x+D_w]/beta
     return np.linalg.norm(G,ord=2,axis=1)
 
-def AG_train_test_time_sc_plot(train_data,test_data,lambda_w=1,beta=1):
+def AG_train_test_time_sc_plot(train_data,test_data,lambda_w=1,alpha=1e-4,beta=1e-4):
     AG=np.load("AG_4_1.npz")
     x_gt=AG['x_gt']
     AG_iter_res=AG['AG_iter_res']
@@ -48,7 +48,7 @@ def AG_train_test_time_sc_plot(train_data,test_data,lambda_w=1,beta=1):
     iter=len(AG_time)
 
     worst_train_loss,worst_test_loss=worst_loss(AG_iter_res,train_data,test_data)
-    stat_con=stationary_condition(AG_iter_res,train_data,test_data,lambda_w=lambda_w,alpha=1,beta=beta)
+    stat_con=stationary_condition(AG_iter_res,train_data,test_data,lambda_w=lambda_w,alpha=alpha,beta=beta)
 
     p1,=plt.plot(range(0,iter),worst_train_loss)
     plt.xlabel("Number of iterations")
@@ -70,7 +70,7 @@ def AG_train_test_time_sc_plot(train_data,test_data,lambda_w=1,beta=1):
     plt.ylabel("Stationary condition")
     plt.show()
 
-def AG_Average_train_test_time_sc_plot(train_data,test_data,lambda_w=1,beta=1):
+def AG_Average_train_test_time_sc_plot(train_data,test_data,lambda_w=1,alpha=1e-4,beta=1e-4):
     AG=np.load("AG_4_1.npz")
     x_gt=AG['x_gt']
     AG_iter_res=AG['AG_iter_res']
@@ -78,13 +78,13 @@ def AG_Average_train_test_time_sc_plot(train_data,test_data,lambda_w=1,beta=1):
     D=len(train_data)
     iter=len(AG_time)
     worst_train_loss_AG,worst_test_loss_AG=worst_loss(AG_iter_res,train_data,test_data)
-    stat_con_AG=stationary_condition(AG_iter_res,train_data,test_data,lambda_w=lambda_w,alpha=1,beta=beta)
+    stat_con_AG=stationary_condition(AG_iter_res,train_data,test_data,lambda_w=lambda_w,alpha=alpha,beta=beta)
 
     Average=np.load("Average_4_1.npz")
     Average_iter_res=Average['Average_iter_res']
     Average_time=Average['Average_time']
     worst_train_loss_Average,worst_test_loss_Average=worst_loss(Average_iter_res,train_data,test_data)
-    stat_con_Average=stationary_condition(Average_iter_res,train_data,test_data,lambda_w=lambda_w,alpha=1,beta=beta)
+    stat_con_Average=stationary_condition(Average_iter_res,train_data,test_data,lambda_w=lambda_w,alpha=alpha,beta=beta)
 
     p11,=plt.plot(range(0,iter),worst_train_loss_AG)
     p12,=plt.plot(range(0,iter),worst_train_loss_Average)
@@ -114,7 +114,7 @@ def AG_Average_train_test_time_sc_plot(train_data,test_data,lambda_w=1,beta=1):
     plt.ylabel("Stationary condition")
     plt.show()
 
-def train_test_time_sc_plot(train_data,test_data,lambda_w=1,beta=1):
+def AG_Average_FO_train_test_time_sc_plot(train_data,test_data,lambda_w=1,alpha=1e-4,beta=1e-4):
     AG=np.load("AG_4_1.npz")
     x_gt=AG['x_gt']
     AG_iter_res=AG['AG_iter_res']
@@ -122,19 +122,19 @@ def train_test_time_sc_plot(train_data,test_data,lambda_w=1,beta=1):
     D=len(train_data)
     iter=len(AG_time)
     worst_train_loss_AG,worst_test_loss_AG=worst_loss(AG_iter_res,train_data,test_data)
-    stat_con_AG=stationary_condition(AG_iter_res,train_data,test_data,lambda_w=lambda_w,alpha=1,beta=beta)
+    stat_con_AG=stationary_condition(AG_iter_res,train_data,test_data,lambda_w=lambda_w,alpha=alpha,beta=beta)
 
     Average=np.load("Average_4_1.npz")
     Average_iter_res=Average['Average_iter_res']
     Average_time=Average['Average_time']
     worst_train_loss_Average,worst_test_loss_Average=worst_loss(Average_iter_res,train_data,test_data)
-    stat_con_Average=stationary_condition(Average_iter_res,train_data,test_data,lambda_w=lambda_w,alpha=1,beta=beta)
+    stat_con_Average=stationary_condition(Average_iter_res,train_data,test_data,lambda_w=lambda_w,alpha=alpha,beta=beta)
 
     FO=np.load("FO_4_1.npz")
     FO_iter_res=FO['FO_iter_res']
     FO_time=FO['FO_time']
     worst_train_loss_FO,worst_test_loss_FO=worst_loss(FO_iter_res,train_data,test_data)
-    stat_con_FO=stationary_condition(FO_iter_res,train_data,test_data,lambda_w=lambda_w,alpha=1,beta=beta)
+    stat_con_FO=stationary_condition(FO_iter_res,train_data,test_data,lambda_w=lambda_w,alpha=alpha,beta=beta)
 
     p11,=plt.plot(range(0,iter),worst_train_loss_AG)
     p12,=plt.plot(range(0,iter),worst_train_loss_Average)
@@ -164,6 +164,71 @@ def train_test_time_sc_plot(train_data,test_data,lambda_w=1,beta=1):
     p42,=plt.plot(range(0,iter),stat_con_Average)
     p43,=plt.plot(range(0,iter),stat_con_FO)
     plt.legend([p41, p42, p43], ["AG","Average","FO"], loc='upper left')
+    plt.xlabel("Number of iterations")
+    plt.ylabel("Stationary condition")
+    plt.show()
+
+def train_test_time_sc_plot(train_data,test_data,lambda_w=1,alpha=1e-4,beta=1e-4):
+    AG=np.load("AG_4_1.npz")
+    x_gt=AG['x_gt']
+    AG_iter_res=AG['AG_iter_res']
+    AG_time=AG['AG_time']
+    D=len(train_data)
+    iter=len(AG_time)
+    worst_train_loss_AG,worst_test_loss_AG=worst_loss(AG_iter_res,train_data,test_data)
+    stat_con_AG=stationary_condition(AG_iter_res,train_data,test_data,lambda_w=lambda_w,alpha=alpha,beta=beta)
+
+    Average=np.load("Average_4_1.npz")
+    Average_iter_res=Average['Average_iter_res']
+    Average_time=Average['Average_time']
+    worst_train_loss_Average,worst_test_loss_Average=worst_loss(Average_iter_res,train_data,test_data)
+    stat_con_Average=stationary_condition(Average_iter_res,train_data,test_data,lambda_w=lambda_w,alpha=alpha,beta=beta)
+
+    FO=np.load("FO_4_1.npz")
+    FO_iter_res=FO['FO_iter_res']
+    FO_time=FO['FO_time']
+    worst_train_loss_FO,worst_test_loss_FO=worst_loss(FO_iter_res,train_data,test_data)
+    stat_con_FO=stationary_condition(FO_iter_res,train_data,test_data,lambda_w=lambda_w,alpha=alpha,beta=beta)
+
+    GP=np.load("GP_4_1.npz")
+    GP_iter_res=GP['GP_iter_res']
+    GP_time=GP['GP_time']
+    worst_train_loss_GP,worst_test_loss_GP=worst_loss(GP_iter_res[:,0:len(train_data[0][0])-1],train_data,test_data)
+    stat_con_GP=stationary_condition(GP_iter_res,train_data,test_data,lambda_w=lambda_w,alpha=alpha,beta=beta)
+
+    p11,=plt.plot(range(0,iter),worst_train_loss_AG)
+    p12,=plt.plot(range(0,iter),worst_train_loss_Average)
+    p13,=plt.plot(range(0,iter),worst_train_loss_FO)
+    p14,=plt.plot(range(0,iter),worst_train_loss_GP)
+    plt.legend([p11, p12, p13, p14], ["AG","Average","FO","GP"], loc='upper left')
+    plt.xlabel("Number of iterations")
+    plt.ylabel("Worst train loss")
+    plt.show()
+
+    p21,=plt.plot(range(0,iter),worst_test_loss_AG)
+    p22,=plt.plot(range(0,iter),worst_test_loss_Average)
+    p23,=plt.plot(range(0,iter),worst_test_loss_FO)
+    p24,=plt.plot(range(0,iter),worst_test_loss_GP)
+    plt.legend([p21, p22, p23, p24], ["AG","Average","FO","GP"], loc='upper left')
+    plt.xlabel("Number of iterations")
+    plt.ylabel("Worst test loss")
+    plt.show()
+
+    plt.yscale('log')
+    p31,=plt.plot(range(0,iter),AG_time-AG_time[0])
+    p32,=plt.plot(range(0,iter),Average_time-Average_time[0])
+    p33,=plt.plot(range(0,iter),FO_time-FO_time[0])
+    p34,=plt.plot(range(0,iter),GP_time-GP_time[0])
+    plt.legend([p31, p32, p33, p34], ["AG","Average","FO","GP"], loc='upper left')
+    plt.xlabel("Number of iterations")
+    plt.ylabel("Total time")
+    plt.show()
+
+    p41,=plt.plot(range(0,iter),stat_con_AG)
+    p42,=plt.plot(range(0,iter),stat_con_Average)
+    p43,=plt.plot(range(0,iter),stat_con_FO)
+    p44,=plt.plot(range(0,iter),stat_con_GP)
+    plt.legend([p41, p42, p43, p44], ["AG","Average","FO","GP"], loc='upper left')
     plt.xlabel("Number of iterations")
     plt.ylabel("Stationary condition")
     plt.show()

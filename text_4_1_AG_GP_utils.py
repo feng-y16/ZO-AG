@@ -3,7 +3,7 @@ import numpy as np
 import random
 import time
 
-def loss_for_D(x,data):#计算对于每一个dataset的loss
+def loss_for_D(x,data):#compute loss for a dataset
     length=np.shape(data)[1]
     a=data[:,0:length-1]
     c=data[:,length-1]
