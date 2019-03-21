@@ -14,7 +14,7 @@ def AG_main(train_data,test_data,init_point,iter=500,x_gt=[1,1],lr=[1e-4,1e-4],l
     #x0=np.zeros(D_x)
     #w0=1.0/D*np.ones(D)
     x0=init_point[0:D_x]
-    w0=init_point[D_x:D_x+D]
+    w0=project_simplex(init_point[D_x:D_x+D])
 
     def loss_AG(x):
         x_=x[0:D_x]
@@ -44,7 +44,7 @@ def Average_main(train_data,test_data,init_point,iter=500,x_gt=[1,1],lr=1e-4):
     #x0=np.zeros(D_x)
     #w0=1.0/D*np.ones(D)
     x0=init_point[0:D_x]
-    w0=init_point[D_x:D_x+D]
+    w0=project_simplex(init_point[D_x:D_x+D])
 
     def loss_AG(x):
         x_=x[0:D_x]
@@ -72,7 +72,7 @@ def FO_main(train_data,test_data,init_point,iter=500,x_gt=[1,1],lr=[1e-4,1e-4],l
     #x0=np.zeros(D_x)
     #w0=1.0/D*np.ones(D)
     x0=init_point[0:D_x]
-    w0=init_point[D_x:D_x+D]
+    w0=project_simplex(init_point[D_x:D_x+D])
 
     def loss_FO(x,w):
         loss=0
@@ -111,20 +111,21 @@ if __name__=="__main__":
     alpha=1e-4
     beta=1e-4
     init_num=1
-    iter=20
+    iter=200
+    init_point=np.zeros(103)#103=100+3, is used when do not run GP_main, but want to run other mains  
 
-    #generate_all_dataset(x_gt)#run when x_gt is changed
-    #save_train_and_test_data()#run when x_gt is changed
+    generate_all_dataset(x_gt)#run when x_gt is changed
+    save_train_and_test_data()#run when x_gt is changed
 
     train_data,test_data=load_train_and_test_data()
 
     #_,__,init_point=GP_main(train_data,test_data,init_num=init_num,iter=iter,lr=[alpha,beta],inner_iter=50)
-    #AG_main(train_data,test_data,init_point=init_point,iter=iter,x_gt=x_gt,lr=[alpha,beta],lambda_w=lambda_w)
-    #Average_main(train_data,test_data,init_point=init_point,iter=iter,lr=alpha,x_gt=x_gt)
-    #FO_main(train_data,test_data,init_point=init_point,iter=iter,x_gt=x_gt,lr=[alpha,beta],lambda_w=lambda_w)
+    AG_main(train_data,test_data,init_point=init_point,iter=iter,x_gt=x_gt,lr=[alpha,beta],lambda_w=lambda_w)
+    Average_main(train_data,test_data,init_point=init_point,iter=iter,lr=alpha,x_gt=x_gt)
+    FO_main(train_data,test_data,init_point=init_point,iter=iter,x_gt=x_gt,lr=[alpha,beta],lambda_w=lambda_w)
 
     #AG_train_test_time_sc_plot(train_data,test_data,lambda_w=lambda_w,alpha=alpha,beta=beta)
     #AG_Average_train_test_time_sc_plot(train_data,test_data,lambda_w=lambda_w,alpha=alpha,beta=beta)
-    #AG_Average_FO_train_test_time_sc_plot(train_data,test_data,lambda_w=lambda_w,alpha=alpha,beta=beta)
+    AG_Average_FO_train_test_time_sc_plot(train_data,test_data,lambda_w=lambda_w,alpha=alpha,beta=beta)
 
-    train_test_time_sc_plot(train_data,test_data,lambda_w=lambda_w,alpha=alpha,beta=beta)
+    #train_test_time_sc_plot(train_data,test_data,lambda_w=lambda_w,alpha=alpha,beta=beta)

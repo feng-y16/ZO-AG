@@ -2,6 +2,7 @@ from __future__ import print_function
 import numpy as np
 import random
 import time
+from text_4_1_dataset import sigmoid_truncated
 
 def loss_for_D(x,data):#compute loss for a dataset
     length=np.shape(data)[1]
@@ -10,6 +11,17 @@ def loss_for_D(x,data):#compute loss for a dataset
     h=1.0/(1+np.exp(-a.dot(x)))
     loss=-(c.dot(np.log(h+1e-15))+(1-c).dot(np.log(1-h+1e-15)))
     return loss
+
+def acc_for_D(x,data):#compute loss for a dataset
+    length=np.shape(data)[1]
+    a=data[:,0:length-1]
+    c=data[:,length-1]
+    acc=0
+    for i in range(0,np.shape(data)[0]):
+        if abs(c[i]-sigmoid_truncated((a[i].T).dot(x)))<1e-2:
+            acc=acc+1
+    acc=acc/np.shape(data)[0]
+    return acc
 
 def loss_derivative_x_for_D(x,data):
     length=np.shape(data)[1]
@@ -43,7 +55,7 @@ def project_simplex(x):
         if abs(sum-1)<1e-6:
             break
         elif sum==0:
-            lambda_opt=np.sum(x)/len(x)
+            lambda_opt=(np.sum(x)-1)/len(x)
         else:
             lambda_opt=(sum-1)/flag*np.ones(len(x))
     x_temp[x_temp<0]=0
