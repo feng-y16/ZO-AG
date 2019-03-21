@@ -113,15 +113,15 @@ if __name__=="__main__":
     init_num=1
     iter=20
 
-    generate_all_dataset(x_gt)#run when x_gt is changed
-    save_train_and_test_data()#run when x_gt is changed
+    #generate_all_dataset(x_gt)#run when x_gt is changed
+    #save_train_and_test_data()#run when x_gt is changed
 
     train_data,test_data=load_train_and_test_data()
 
-    _,__,init_point=GP_main(train_data,test_data,init_num=init_num,iter=iter,lr=[alpha,beta],inner_iter=50)
-    AG_main(train_data,test_data,init_point=init_point,iter=iter,x_gt=x_gt,lr=[alpha,beta],lambda_w=lambda_w)
-    Average_main(train_data,test_data,init_point=init_point,iter=iter,lr=alpha,x_gt=x_gt)
-    FO_main(train_data,test_data,init_point=init_point,iter=iter,x_gt=x_gt,lr=[alpha,beta],lambda_w=lambda_w)
+    #_,__,init_point=GP_main(train_data,test_data,init_num=init_num,iter=iter,lr=[alpha,beta],inner_iter=50)
+    #AG_main(train_data,test_data,init_point=init_point,iter=iter,x_gt=x_gt,lr=[alpha,beta],lambda_w=lambda_w)
+    #Average_main(train_data,test_data,init_point=init_point,iter=iter,lr=alpha,x_gt=x_gt)
+    #FO_main(train_data,test_data,init_point=init_point,iter=iter,x_gt=x_gt,lr=[alpha,beta],lambda_w=lambda_w)
 
     #AG_train_test_time_sc_plot(train_data,test_data,lambda_w=lambda_w,alpha=alpha,beta=beta)
     #AG_Average_train_test_time_sc_plot(train_data,test_data,lambda_w=lambda_w,alpha=alpha,beta=beta)
