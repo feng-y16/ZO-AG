@@ -107,7 +107,7 @@ def GP_main(train_data,test_data,init_num=10,iter=500,lr=[1e-4,1e-4],inner_iter=
 
 if __name__=="__main__":
     x_gt=np.ones(100)
-    lambda_w=1
+    lambda_w=-1
     alpha=1e-4
     beta=1e-4
     init_num=1
