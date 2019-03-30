@@ -325,6 +325,7 @@ def AG_maxmin_bounded_l2(func,x0,y0,step,lr,dis_fun,bound_x,epsilon_y,iter=20,in
     AG_time=np.zeros(iter)
     for i in range(0,iter):
         AG_time[i]=time.time()
+        AG_iter_res[i] = x_opt
         #print("x_opt=",end="")
         #print(x_opt)
         #print("step_x=",end="")
@@ -336,13 +337,11 @@ def AG_maxmin_bounded_l2(func,x0,y0,step,lr,dis_fun,bound_x,epsilon_y,iter=20,in
             return func(np.hstack((x_opt,y)))
         y_opt=ZOPSGD_bounded_f(func_xfixed,y_opt,dis_fun,epsilon_y,step[1],np.zeros(len(y0)),lr[1],inner_iter)
 
-        AG_iter_res[i] = x_opt
-        temp_f=func_xfixed(y_opt)
-
         def func_yfixed(x):
             return func(np.hstack((x,y_opt)))
-        x_opt=(ZOPSGA_bounded(func_yfixed,x_opt,bound_x,step[0],lr[0],inner_iter))
+        x_opt=ZOPSGA_bounded(func_yfixed,x_opt,bound_x,step[0],lr[0],inner_iter)
 
+        temp_f=func_yfixed(x_opt)
         if i%10 == 0:
             print("ZO-AG for Max-Min: Iter = %d, obj = %3.4f" % (i, temp_f) )
 

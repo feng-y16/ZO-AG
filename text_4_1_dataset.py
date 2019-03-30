@@ -3,7 +3,7 @@ import numpy as np
 import random
 
 def sigmoid_truncated(x):
-    if 1/(1+np.exp(-x))>0.5:
+    if 1.0/(1+np.exp(-x))>0.5:
         return 1
     else: 
         return 0

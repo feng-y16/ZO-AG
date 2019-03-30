@@ -38,8 +38,34 @@ def loss_derivative_w(x,w,lambda_w,data_all):
         #length=np.shape(data_all[i])[1]
         #a=data_all[i][:,0:length-1]
         #c=data_all[i][:,length-1]
-        derivative[i]=loss_for_D(x,data_all[i])+2*lambda_w*(w[i]-1.0/len(w))
+        derivative[i]=loss_for_D(x,data_all[i])-2*lambda_w*(w[i]-1.0/len(w))
     return derivative
+
+def bisection(f,lambda_l,lambda_u,epsilon):
+    while abs(lambda_u-lambda_l)>epsilon:
+        lambda_m=(lambda_u+lambda_l)/2
+        if f(lambda_m)==0:
+            return lambda_m
+        elif np.sign(f(lambda_m))==np.sign(f(lambda_l)):
+            lambda_l=lambda_m
+        else:
+            lambda_u=lambda_m
+    return (lambda_u+lambda_l)/2
+
+def project_simplex_bisection(x):
+    lambda_l=np.min(x)-1/len(x)
+    lambda_u=np.max(x)-1/len(x)
+    epsilon=1e-5
+    def g(lambda_):
+        g_value=0
+        for i in range(0,len(x)):
+            temp=x[i]-lambda_
+            if temp>0:
+                g_value=g_value+(x[i]-lambda_)
+        return g_value-1
+    x_temp=x-bisection(g,lambda_l,lambda_u,epsilon)
+    x_temp[x_temp<0]=0
+    return x_temp
 
 def project_simplex(x):
     lambda_opt=np.zeros(len(x))
@@ -122,11 +148,9 @@ def ZOSIGNSGD_bounded(func,x0,bound,step,lr=0.1,iter=100,Q=10,project=project_bo
             best_f=y_temp
             x_opt=x_temp
         else:
-            # print('ZOsignSGD for -likelihood: Not descent direction')
             flag1=flag1+1
             if flag1%3==0:
-                # step=step*0.95
-                lr=lr*0.95
+                lr=lr*0.98
     return x_opt
 
 def ZOPSGD(func,x0,step,lr=0.1,iter=100,Q=10):
@@ -160,8 +184,7 @@ def ZOPSGD(func,x0,step,lr=0.1,iter=100,Q=10):
         else:
             flag=flag+1
             if flag%2==0:
-                # step=step*0.95
-                lr=lr*0.95
+                lr=lr*0.98
     return x_opt
 
 def ZOPSGA(func,x0,step,lr=0.1,iter=100,Q=10):
@@ -195,8 +218,7 @@ def ZOPSGA(func,x0,step,lr=0.1,iter=100,Q=10):
         else:
             flag=flag+1
             if flag%2==0:
-                # step=step*0.95
-                lr=lr*0.95
+                lr=lr*0.98
     return x_opt
 
 def ZOPSGD_bounded(func,x0,bound,step,lr=0.1,iter=100,Q=10,project=project_bound):
@@ -230,8 +252,7 @@ def ZOPSGD_bounded(func,x0,bound,step,lr=0.1,iter=100,Q=10,project=project_bound
         else:
             flag1=flag1+1
             if flag1%3==0:
-                step=step*0.95
-                lr=lr*0.95
+                lr=lr*0.98
     return x_opt
 
 def ZOPSGA_bounded(func,x0,bound,step,lr=0.1,iter=100,Q=10,project=project_bound):
@@ -265,8 +286,7 @@ def ZOPSGA_bounded(func,x0,bound,step,lr=0.1,iter=100,Q=10,project=project_bound
         else:
             flag1=flag1+1
             if flag1%3==0:
-                step=step*0.95
-                lr=lr*0.95
+                lr=lr*0.98
     return x_opt
 
 def ZOPSGD_bounded_f(func,x0,dis_f,epsilon,step,x_cen,lr=0.1,iter=100,Q=10,project=project_f_l2):
@@ -298,11 +318,9 @@ def ZOPSGD_bounded_f(func,x0,dis_f,epsilon,step,x_cen,lr=0.1,iter=100,Q=10,proje
             best_f=y_temp
             x_opt=x_temp
         else:
-            # print('ZO-PSGD: Not descent direction')
             flag1=flag1+1
             if flag1%3==0:
-                step=step*0.95
-                lr=lr*0.95
+                lr=lr*0.98
     return x_opt
 
 def ZOPSGA_bounded_f(func,x0,dis_f,epsilon,step,x_cen,lr=0.1,iter=100,Q=10,project=project_f_l2):
@@ -337,8 +355,7 @@ def ZOPSGA_bounded_f(func,x0,dis_f,epsilon,step,x_cen,lr=0.1,iter=100,Q=10,proje
         else:
             flag1=flag1+1
             if flag1%3==0:
-                step=step*0.95
-                lr=lr*0.95
+                lr=lr*0.98
     return x_opt
 
 def ZOPSGA_simplex(func,x0,step,lr=0.1,iter=100,Q=10,project=project_simplex):
@@ -372,8 +389,7 @@ def ZOPSGA_simplex(func,x0,step,lr=0.1,iter=100,Q=10,project=project_simplex):
         else:
             flag1=flag1+1
             if flag1%3==0:
-                step=step*0.95
-                lr=lr*0.95
+                lr=lr*0.98
     return x_opt
 
 def AG_minmax_bounded_simplex(func,x0,y0,step,lr,bound_x,iter=20,inner_iter=1):
@@ -401,8 +417,10 @@ def AG_minmax_bounded_simplex(func,x0,y0,step,lr,bound_x,iter=20,inner_iter=1):
         temp_f=func_yfixed(x_opt)
         if i%10 == 0:
             print("ZO-AG for Min-Max: Iter = %d, lr_x=%f, obj = %3.4f" % (i, lr[0], temp_f) )
-            print("x=",end="")
-            print(x_opt)
+            print("x_max=",end="")
+            print(max(x_opt))
+            print("x_min=",end="")
+            print(min(x_opt))
         #print("x_opt=",end="")
         #print(x_opt)
         #print("step_x=",end="")
@@ -414,8 +432,7 @@ def AG_minmax_bounded_simplex(func,x0,y0,step,lr,bound_x,iter=20,inner_iter=1):
         else:
             flag=flag+1
             if flag%3==0:
-                # step[0]=step[0]*0.9
-                lr[0]=lr[0]*0.95
+                lr[0]=lr[0]*0.98
     return x_opt,AG_iter_res,AG_time
 
 def AG_run(func,x0,y0,step,lr,iter=20,inner_iter=1):
@@ -462,16 +479,17 @@ def Average_run(func,x0,step,D_w=3,lr=0.1,iter=100,Q=10,project=project_bound):
         #print(y_temp)
         if i%10 == 0:
             print("Average for Min-Max: Iter = %d, lr_x=%f, obj = %3.4f" % (i, lr, y_temp) )
-            print("x=",end="")
-            print(x_opt)
+            print("x_max=",end="")
+            print(max(x_opt))
+            print("x_min=",end="")
+            print(min(x_opt))
         if y_temp<best_f:
             best_f=y_temp
             x_opt=x_temp
         else:
             flag1=flag1+1
             if flag1%3==0:
-                #step=step*0.95
-                lr=lr*0.95
+                lr=lr*0.98
     return x_opt,Average_iter_res,Average_time
 
 def FO_run(func,data_all,x0,w0,lambda_w,lr,iter=100,project=project_simplex):
@@ -500,7 +518,6 @@ def FO_run(func,data_all,x0,w0,lambda_w,lr,iter=100,project=project_simplex):
         dx=np.zeros(D_x)
         for j in range(0,D_w):
             dx=dx+w_opt[j]*loss_derivative_x_for_D(x_opt,data_all[j])
-        #print(dx)
         x_temp=x_opt-dx*lr[0]
         y_temp=func(x_temp,w_opt)
         #print("x_opt=",end="")
@@ -513,17 +530,44 @@ def FO_run(func,data_all,x0,w0,lambda_w,lr,iter=100,project=project_simplex):
         #print(y_temp)
         if i%10 == 0:
             print("FO for Min-Max: Iter = %d, lr_x=%f, obj = %3.4f" % (i, lr[0], y_temp) )
-            print("x=",end="")
-            print(x_opt)
+            print("x_max=",end="")
+            print(max(x_opt))
+            print("x_min=",end="")
+            print(min(x_opt))
         if y_temp<func(x_opt,w_opt):
             best_f=y_temp
             x_opt=x_temp
         else:
             flag1=flag1+1
             if flag1%3==0:
-                #step=step*0.95
-                lr=lr*0.95
+                lr=lr*0.98
     return x_opt,FO_iter_res,FO_time
 
 if __name__=="__main__":
-    project_simplex([-1,1,3,2,5,-4,6,5.5,5.75,5.875])
+    m=20
+    sigma=10
+    num=10000
+    a_test=[]
+    for i in range(0,num):
+        a_test.append(np.random.normal(0, sigma, m))
+    
+    result1=[]
+    result2=[]
+    time_start=time.time()
+    for i in range(0,num):
+        a=a_test[i]
+        result1.append(project_simplex(a))
+    time_end=time.time()
+    print('Time cost of project_simplex:',time_end-time_start,"s")
+
+    time_start=time.time()
+    for i in range(0,num):
+        a=a_test[i]
+        result2.append(project_simplex_bisection(a))
+    time_end=time.time()
+    print('Time cost of project_simplex_bisection:',time_end-time_start,"s")
+
+    distance=[]
+    for i in range(0,num):
+        distance.append(np.linalg.norm(result1[i]-result2[i]))
+    print('Max distance:',np.max(np.array(distance)))
