@@ -371,6 +371,22 @@ def plot_nineline(data1,data2,data3,xlabel,ylabel,legend=["AG","Average","FO"],l
         plt.savefig(filename)
     plt.show()
 
+def plot_sixline(data1,data2,xlabel,ylabel,legend=["AG","Average"],loc='upper left',filename=None):
+    iter=np.shape(data1)[1]
+    p11,=plt.plot(range(0,iter),data1[0],color='red',linestyle='-.')
+    p12,=plt.plot(range(0,iter),data2[0],color='green',linestyle='-.')
+    p21,=plt.plot(range(0,iter),data1[1],color='red',linestyle=':')
+    p22,=plt.plot(range(0,iter),data2[1],color='green',linestyle=':')
+    p31,=plt.plot(range(0,iter),data1[2],color='red',linestyle='--')
+    p32,=plt.plot(range(0,iter),data2[2],color='green',linestyle='--')
+    plt.legend([p11, p12, p21, p22, p31, p32], [legend[0]+"_D1",legend[1]+"_D1",
+                                                               legend[0]+"_D2",legend[1]+"_D2",legend[0]+"_D3",legend[1]+"_D3"], loc='upper left')
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    if filename!=None:
+        plt.savefig(filename)
+    plt.show()
+
 def plot_threeline(data1,data2,data3,xlabel,ylabel,legend=["AG","Average","FO"],loc='upper left',filename=None):
     iter=np.shape(data1)[0]
     p1,=plt.plot(range(0,iter),data1)
@@ -464,6 +480,39 @@ def mean_std(data):
         std[i]=np.std(iter_data)
     return mean,std
 
+def mean_all(data):
+    times=len(data)
+    n=np.shape(data[0])[0]
+    iter=np.shape(data[0])[1]
+    mean=np.zeros((n,iter))
+    std=np.zeros((n,iter))
+    mean_mean=np.zeros(iter)
+    mean_std=np.zeros(iter)
+    for i in range(0,iter):
+        temp_data1=np.zeros((n,times))
+        for j in range(0,n):
+            temp_data2=np.zeros(times)
+            for k in range(0,times):
+                temp_data2[k]=data[k][j][i]
+                temp_data1[j][k]=data[k][j][i]
+            mean[j][i]=np.mean(temp_data2)
+            std[j][i]=np.std(temp_data2)
+        temp_data1=temp_data1.flatten()
+        mean_mean[i]=np.mean(temp_data1)
+        mean_std[i]=np.std(temp_data1)
+    return mean,std,mean_mean,mean_std
+
+def mean(data):
+    n=len(data)
+    iter=len(data[0])
+    mean=np.zeros(iter)
+    for i in range(0,iter):
+        iter_data=np.zeros(n)
+        for j in range(0,n):
+            iter_data[j]=np.array(data[j][i])
+        mean[i]=np.mean(iter_data)
+    return mean
+
 def multiplot_all(train_data,test_data,lambda_w,alpha,beta,times):
     wtrl_AG=[]
     wtel_AG=[]
@@ -471,6 +520,8 @@ def multiplot_all(train_data,test_data,lambda_w,alpha,beta,times):
     wtec_AG=[]
     atrl_AG=[]
     atel_AG=[]
+    atrc_AG=[]
+    atec_AG=[]
     sc_AG=[]
     wtrl_Average=[]
     wtel_Average=[]
@@ -478,6 +529,8 @@ def multiplot_all(train_data,test_data,lambda_w,alpha,beta,times):
     wtec_Average=[]
     atrl_Average=[]
     atel_Average=[]
+    atrc_Average=[]
+    atec_Average=[]
     sc_Average=[]
     wtrl_FO=[]
     wtel_FO=[]
@@ -485,7 +538,12 @@ def multiplot_all(train_data,test_data,lambda_w,alpha,beta,times):
     wtec_FO=[]
     atrl_FO=[]
     atel_FO=[]
+    atrc_FO=[]
+    atec_FO=[]
     sc_FO=[]
+    w1_AG=[]
+    w2_AG=[]
+    w3_AG=[]
     for i in range(0,times):
         filename=str(i)
         AG=np.load("AG_4_1_"+filename+".npz")
@@ -494,6 +552,9 @@ def multiplot_all(train_data,test_data,lambda_w,alpha,beta,times):
         AG_time=AG['AG_time']
         D=len(train_data)
         iter=len(AG_time)
+        w1_AG.append(AG_iter_res[:,np.shape(x_gt)[0]])
+        w2_AG.append(AG_iter_res[:,np.shape(x_gt)[0]+1])
+        w3_AG.append(AG_iter_res[:,np.shape(x_gt)[0]+2])
         worst_train_loss_AG,worst_test_loss_AG=worst_loss(AG_iter_res,train_data,test_data)
         worst_train_accuracy_AG,worst_test_accuracy_AG=worst_accuracy(AG_iter_res,train_data,test_data)
         all_train_loss_AG,all_test_loss_AG=all_loss(AG_iter_res,train_data,test_data)
@@ -503,6 +564,8 @@ def multiplot_all(train_data,test_data,lambda_w,alpha,beta,times):
         wtel_AG.append(worst_test_loss_AG)
         atrl_AG.append(all_train_loss_AG)
         atel_AG.append(all_test_loss_AG)
+        atrc_AG.append(all_train_accuracy_AG)
+        atec_AG.append(all_test_accuracy_AG)
         wtrc_AG.append(worst_train_accuracy_AG)
         wtec_AG.append(worst_test_accuracy_AG)
         sc_AG.append(stat_con_AG)
@@ -519,6 +582,8 @@ def multiplot_all(train_data,test_data,lambda_w,alpha,beta,times):
         wtel_Average.append(worst_test_loss_Average)
         atrl_Average.append(all_train_loss_Average)
         atel_Average.append(all_test_loss_Average)
+        atrc_Average.append(all_train_accuracy_Average)
+        atec_Average.append(all_test_accuracy_Average)
         wtrc_Average.append(worst_train_accuracy_Average)
         wtec_Average.append(worst_test_accuracy_Average)
         sc_Average.append(stat_con_Average)
@@ -535,30 +600,45 @@ def multiplot_all(train_data,test_data,lambda_w,alpha,beta,times):
         wtel_FO.append(worst_test_loss_FO)
         atrl_FO.append(all_train_loss_FO)
         atel_FO.append(all_test_loss_FO)
+        atrc_FO.append(all_train_accuracy_FO)
+        atec_FO.append(all_test_accuracy_FO)
         wtrc_FO.append(worst_train_accuracy_FO)
         wtec_FO.append(worst_test_accuracy_FO)
         sc_FO.append(stat_con_FO)
 
     wtrl_AG_mean,wtrl_AG_std=mean_std(wtrl_AG)
     wtel_AG_mean,wtel_AG_std=mean_std(wtel_AG)
-    #atrl_AG_mean,atrl_AG_std=mean_std(atrl_AG)
     wtrc_AG_mean,wtrc_AG_std=mean_std(wtrc_AG)
     wtec_AG_mean,wtec_AG_std=mean_std(wtec_AG)
+    atrl_AG_mean,atrl_AG_std,atrl_AG_mean_mean,atrl_AG_mean_std=mean_all(atrl_AG)
+    atel_AG_mean,atel_AG_std,atel_AG_mean_mean,atel_AG_mean_std=mean_all(atel_AG)
+    atrc_AG_mean,atrc_AG_std,atrc_AG_mean_mean,atrc_AG_mean_std=mean_all(atrc_AG)
+    atec_AG_mean,atec_AG_std,atec_AG_mean_mean,atec_AG_mean_std=mean_all(atec_AG)
     sc_AG_mean,sc_AG_std=mean_std(sc_AG)
 
     wtrl_Average_mean,wtrl_Average_std=mean_std(wtrl_Average)
     wtel_Average_mean,wtel_Average_std=mean_std(wtel_Average)
-    #atrl_Average_mean,atrl_Average_std=mean_std(atrl_Average)
     wtrc_Average_mean,wtrc_Average_std=mean_std(wtrc_Average)
     wtec_Average_mean,wtec_Average_std=mean_std(wtec_Average)
+    atrl_Average_mean,atrl_Average_std,atrl_Average_mean_mean,atrl_Average_mean_std=mean_all(atrl_Average)
+    atel_Average_mean,atel_Average_std,atel_Average_mean_mean,atel_Average_mean_std=mean_all(atel_Average)
+    atrc_Average_mean,atrc_Average_std,atrc_Average_mean_mean,atrc_Average_mean_std=mean_all(atrc_Average)
+    atec_Average_mean,atec_Average_std,atec_Average_mean_mean,atec_Average_mean_std=mean_all(atec_Average)
     sc_Average_mean,sc_Average_std=mean_std(sc_Average)
 
     wtrl_FO_mean,wtrl_FO_std=mean_std(wtrl_FO)
     wtel_FO_mean,wtel_FO_std=mean_std(wtel_FO)
-    #atrl_FO_mean,atrl_FO_std=mean_std(atrl_FO)
     wtrc_FO_mean,wtrc_FO_std=mean_std(wtrc_FO)
     wtec_FO_mean,wtec_FO_std=mean_std(wtec_FO)
+    atrl_FO_mean,atrl_FO_std,atrl_FO_mean_mean,atrl_FO_mean_std=mean_all(atrl_FO)
+    atel_FO_mean,atel_FO_std,atel_FO_mean_mean,atel_FO_mean_std=mean_all(atel_FO)
+    atrc_FO_mean,atrc_FO_std,atrc_FO_mean_mean,atrc_FO_mean_std=mean_all(atrc_FO)
+    atec_FO_mean,atec_FO_std,atec_FO_mean_mean,atec_FO_mean_std=mean_all(atec_FO)
     sc_FO_mean,sc_FO_std=mean_std(sc_FO)
+
+    w1_mean,w1_std=mean_std(w1_AG)
+    w2_mean,w2_std=mean_std(w2_AG)
+    w3_mean,w3_std=mean_std(w3_AG)
 
     plot_threeline_shaded(wtrl_AG_mean,wtrl_AG_std,wtrl_Average_mean,wtrl_Average_std,wtrl_FO_mean,wtrl_FO_std,
                    "Number of iterations","Worst train loss",legend=["AG","Average","FO"],loc='upper left',filename="worst_train_loss_shaded.png")
@@ -568,3 +648,69 @@ def multiplot_all(train_data,test_data,lambda_w,alpha,beta,times):
                    "Number of iterations","Worst test accuracy",legend=["AG","Average","FO"],loc='upper left',filename="worst_test_accuracy_shaded.png")
     plot_threeline_shaded(sc_AG_mean,sc_AG_std,sc_Average_mean,sc_Average_std,sc_FO_mean,sc_FO_std,
                    "Number of iterations","Stationary condition",legend=["AG","Average","FO"],loc='upper left',filename="stationary_condition_shaded.png")
+    plot_sixline(atrl_AG_mean,atrl_Average_mean,"Number of iterations","Train loss",legend=["AG","Average"],loc='upper left',filename="train_loss_AG_Average.png")
+    plot_threeline_shaded(w1_mean,w1_std,w2_mean,w2_std,w3_mean,w3_std,
+                   "Number of iterations","w_Di",legend=["w_D1","w_D2","w_D3"],loc='upper left',filename="w_Di_shaded.png")
+    plot_threeline_shaded(atrc_AG_mean_mean,atrc_AG_mean_std,atrc_Average_mean_mean,atrc_Average_mean_std,atrc_FO_mean_mean,atrc_FO_mean_std,
+                   "Number of iterations","Average train accuracy",legend=["AG","Average","FO"],loc='upper left',filename="average_train_accuracy_shaded.png")
+    plot_threeline_shaded(atec_AG_mean_mean,atec_AG_mean_std,atec_Average_mean_mean,atec_Average_mean_std,atec_FO_mean_mean,atec_FO_mean_std,
+                   "Number of iterations","Average test accuracy",legend=["AG","Average","FO"],loc='upper left',filename="average_test_accuracy_shaded.png")
+
+def lambda_plot(data,lambda_w,ylabel,xlabel="Number of iterations",filename=None):
+    iter=np.shape(data[0])[0]
+    legend=[]
+    for i in range(0,len(lambda_w)):
+        plt.plot(range(0,iter),data[i])
+        legend.append("lambda="+str(lambda_w[i]))
+    plt.legend(legend,loc='upper left')
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    if filename!=None:
+        plt.savefig(filename)
+    plt.show()
+
+def multilambda_plot_all(train_data,test_data,lambda_w,alpha,beta,times):
+    WTRL=[]
+    WTEL=[]
+    WTEC=[]
+    SC=[]
+    for i in range(0,len(lambda_w)):
+        wtrl_AG=[]
+        wtel_AG=[]
+        wtrc_AG=[]
+        wtec_AG=[]
+        atrl_AG=[]
+        atel_AG=[]
+        sc_AG=[]
+        lambda_i=lambda_w[i]
+        for j in range(0,times):
+            AG=np.load("AG_4_1_"+"lambda_"+str(lambda_i)+"_"+str(j)+".npz")
+            x_gt=AG['x_gt']
+            AG_iter_res=AG['AG_iter_res']
+            AG_time=AG['AG_time']
+            D=len(train_data)
+            iter=len(AG_time)
+            wtrl,wtel=worst_loss(AG_iter_res,train_data,test_data)
+            wtrc,wtec=worst_accuracy(AG_iter_res,train_data,test_data)
+            atrl,atel=all_loss(AG_iter_res,train_data,test_data)
+            atrc,atec=all_acc(AG_iter_res,train_data,test_data)
+            sc=stationary_condition(AG_iter_res,train_data,test_data,lambda_w=lambda_i,alpha=alpha,beta=beta)
+            wtrl_AG.append(wtrl)
+            wtel_AG.append(wtel)
+            wtrc_AG.append(wtrc)
+            wtec_AG.append(wtec)
+            atrl_AG.append(atrl)
+            atel_AG.append(atel)
+            sc_AG.append(sc)
+        wtrl=mean(wtrl_AG)
+        wtel=mean(wtel_AG)
+        wtec=mean(wtec_AG)
+        sc=mean(sc_AG)
+        WTRL.append(wtrl)
+        WTEL.append(wtel)
+        WTEC.append(wtec)
+        SC.append(sc)
+    lambda_plot(WTRL,lambda_w,"Worst train loss","Number of iterations","lambda_worst_train_loss.png")
+    lambda_plot(WTEL,lambda_w,"Worst test loss","Number of iterations","lambda_worst_test_loss.png")
+    lambda_plot(WTEC,lambda_w,"Worst test accuracy","Number of iterations","lambda_worst_test_accuracy.png")
+    lambda_plot(WTRL,lambda_w,"Stationary condition","Number of iterations","lambda_stationary_condition.png")

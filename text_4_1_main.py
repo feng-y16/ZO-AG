@@ -45,8 +45,7 @@ def Average_main(train_data,test_data,init_point,iter=500,x_gt=[1,1],lr=1e-3,fil
     #x0=np.zeros(D_x)
     #w0=1.0/D*np.ones(D)
     x0=init_point[0:D_x]
-    w0=project_simplex(init_point[D_x:D_x+D])
-
+    w0=project_simplex(init_point[D_x:D_x+3])
     def loss_Average(x):
         loss=0
         for i in range(0,D):
@@ -139,12 +138,35 @@ def main_multitimes(D_x=100,x_gt0=1,times=10,iter=200,alpha=1e-3,beta=1e-3,lambd
     train_data,test_data=load_train_and_test_data()
     for i in range(0,times):
         init_point=np.random.normal(0, 1, D_x+3)
+        init_point[D_x]=1/3
+        init_point[D_x+1]=1/3
+        init_point[D_x+2]=1/3
         AG_main(train_data,test_data,init_point=init_point,iter=iter,x_gt=x_gt,lr=[alpha,beta],lambda_w=lambda_w,filename=str(i))
         Average_main(train_data,test_data,init_point=init_point,iter=iter,lr=alpha,x_gt=x_gt,filename=str(i))
         FO_main(train_data,test_data,init_point=init_point,iter=iter,x_gt=x_gt,lr=[alpha,beta],lambda_w=lambda_w,filename=str(i))
 
     multiplot_all(train_data,test_data,lambda_w=lambda_w,alpha=alpha,beta=beta,times=times)
 
+def main_multilambda(D_x=100,x_gt0=1,times=10,iter=200,alpha=1e-3,beta=1e-3,lambda_w=[1e-3,1e-1,1e+1],regenerate=False):
+    x_gt=x_gt0*np.ones(D_x)
+
+    if regenerate:
+        generate_all_dataset(x_gt)#run when x_gt is changed
+        save_train_and_test_data()#run when x_gt is changed
+        time.sleep(5)
+
+    train_data,test_data=load_train_and_test_data()
+
+    for i in range(0,len(lambda_w)):
+        for j in range(0,times):
+            init_point=np.random.normal(0, 1, D_x+3)
+            init_point[D_x]=1/3
+            init_point[D_x+1]=1/3
+            init_point[D_x+2]=1/3
+            AG_main(train_data,test_data,init_point=init_point,iter=iter,x_gt=x_gt,lr=[alpha,beta],lambda_w=lambda_w[i],filename="lambda_"+str(lambda_w[i])+"_"+str(j))
+    multilambda_plot_all(train_data,test_data,lambda_w=lambda_w,alpha=alpha,beta=beta,times=times)
+
 if __name__=="__main__":
-    #main_one_time(D_x=100,x_gt0=0,init_x0=5,iter=500,alpha=2e-4,beta=2e-4,lambda_w=1e-1,regenerate=False)
-    main_multitimes(D_x=100,x_gt0=1,times=10,iter=500,alpha=2e-4,beta=2e-4,lambda_w=1,regenerate=False)
+    #main_one_time(D_x=100,x_gt0=1,init_x0=5,iter=500,alpha=5e-1,beta=2e-3,lambda_w=1e-2,regenerate=False)
+    main_multitimes(D_x=100,x_gt0=1,times=10,iter=80,alpha=5e-1,beta=2e-3,lambda_w=1e-2,regenerate=False)
+    main_multilambda(D_x=100,x_gt0=1,times=10,iter=500,alpha=5e-1,beta=2e-3,lambda_w=[1e-4,1e-1,1e+2],regenerate=False)

@@ -6,10 +6,11 @@ from text_4_1_dataset import sigmoid_truncated
 
 def loss_for_D(x,data):#compute loss for a dataset
     length=np.shape(data)[1]
+    num=np.shape(data)[0]
     a=data[:,0:length-1]
     c=data[:,length-1]
     h=1.0/(1+np.exp(-a.dot(x)))
-    loss=-(c.dot(np.log(h+1e-15))+(1-c).dot(np.log(1-h+1e-15)))
+    loss=-(c.dot(np.log(h+1e-15))+(1-c).dot(np.log(1-h+1e-15)))/num
     return loss
 
 def acc_for_D(x,data):#compute loss for a dataset
@@ -25,10 +26,11 @@ def acc_for_D(x,data):#compute loss for a dataset
 
 def loss_derivative_x_for_D(x,data):
     length=np.shape(data)[1]
+    num=np.shape(data)[0]
     a=data[:,0:length-1]
     c=data[:,length-1]
     h=1.0/(1+np.exp(-a.dot(x)))
-    derivative=(((h-c).T).dot(a)).T
+    derivative=(((h-c).T).dot(a)).T/num
     #print(derivative)
     return derivative
 
