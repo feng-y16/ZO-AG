@@ -47,6 +47,13 @@ def generate_all_dataset(x=[1,1],filename=["D1","D2","D3"],N=[800,1000,500],sigm
     for i in range(0,len(filename)):
         generate_original_data(N[i],sigma2[i],x,filename[i])
 
+def generate_all_dataset_heter(x=[1,1],filename=["D1","D2","D3"],N=[500,500,500,500,500,500,500],sigma2=[1,7,5,5,0.1,10]):
+    for i in range(0,3):
+        data1=generate_data(N[2*i],sigma2[2*i],x)
+        data2=generate_data(N[2*i+1],sigma2[2*i+1],x)
+        data=np.concatenate((data1,data2))
+        save_data(filename[i],data)
+
 def save_train_and_test_data(shuffle=False,train_ratio=0.7,filename=["D1","D2","D3"]):#for generated datasets, divide them into training and testing part, and save
     train_data=[]
     test_data=[]
