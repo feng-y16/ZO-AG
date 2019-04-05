@@ -237,5 +237,5 @@ if __name__=="__main__":
     #main_multitimes(D_x=100,x_gt0=1,times=10,iter=500,alpha=3e-1,beta=3e-3,lambda_w=1e-2,regenerate=False,heter_mean=True)
     #main_multilambda(D_x=100,x_gt0=1,times=10,iter=500,alpha=3e-1,beta=3e-3,lambda_w=[1e-4,1e-1,1e+2],regenerate=False,heter_mean=True)
 
-    #main_multitimes_logx(D_x=100,x_gt0=1,times=10,iter=500,alpha=3e-1,beta=1e-1,lambda_w=1e-5,regenerate=True,heter_mean=True)
-    main_multilambda_logx(D_x=100,x_gt0=1,times=10,iter=500,alpha=3e-1,beta=3e-3,lambda_w=[1e-7,1e-5,1e-3],regenerate=False,heter_mean=True)
+    main_multitimes_logx(D_x=100,x_gt0=1,times=10,iter=500,alpha=3e-1,beta=1e-1,lambda_w=1e-5,regenerate=True,heter_mean=True)
+    main_multilambda_logx(D_x=100,x_gt0=1,times=10,iter=500,alpha=3e-1,beta=1e-1,lambda_w=[1e-7,1e-5,1e-3],regenerate=False,heter_mean=True)
