@@ -111,13 +111,13 @@ def GP_main(train_data,test_data,init_num=10,iter=500,lr=[1e-3,1e-3],inner_iter=
     np.savez("GP_4_1.npz",x_gt=x_gt,GP_iter_res=optimizer.X[optimizer.init_num:],GP_time=optimizer.GP_time)
     return train_data,test_data,optimizer.iter_initial_point
 
-def main_one_time(D_x=100,x_gt0=1,init_x0=0,iter=200,alpha=1e-3,beta=1e-3,lambda_w=1e-3,regenerate=False,heter=True):
+def main_one_time(D_x=100,x_gt0=1,init_x0=0,iter=200,alpha=1e-3,beta=1e-3,lambda_w=1e-3,regenerate=False,heter_mean=True):
     x_gt=x_gt0*np.ones(D_x)
     init_point=init_x0*np.ones(D_x+3)
 
     if regenerate:
-        if heter:
-            generate_all_dataset_heter(x_gt)#run when x_gt is changed
+        if heter_mean:
+            generate_all_dataset_heter_mean(x_gt)#run when x_gt is changed
             save_train_and_test_data()#run when x_gt is changed
             time.sleep(5)
         else:
@@ -133,12 +133,12 @@ def main_one_time(D_x=100,x_gt0=1,init_x0=0,iter=200,alpha=1e-3,beta=1e-3,lambda
 
     AG_Average_FO_train_test_time_sc_plot_all(train_data,test_data,lambda_w=lambda_w,alpha=alpha,beta=beta)
 
-def main_multitimes(D_x=100,x_gt0=1,times=10,iter=200,alpha=1e-3,beta=1e-3,lambda_w=1e-3,regenerate=False,heter=True):
+def main_multitimes(D_x=100,x_gt0=1,times=10,iter=200,alpha=1e-3,beta=1e-3,lambda_w=1e-3,regenerate=False,heter_mean=True):
     x_gt=x_gt0*np.ones(D_x)
 
     if regenerate:
-        if heter:
-            generate_all_dataset_heter(x_gt)#run when x_gt is changed
+        if heter_mean:
+            generate_all_dataset_heter_mean(x_gt)#run when x_gt is changed
             save_train_and_test_data()#run when x_gt is changed
             time.sleep(5)
         else:
@@ -158,12 +158,12 @@ def main_multitimes(D_x=100,x_gt0=1,times=10,iter=200,alpha=1e-3,beta=1e-3,lambd
 
     multiplot_all(train_data,test_data,lambda_w=lambda_w,alpha=alpha,beta=beta,times=times)
 
-def main_multitimes_logx(D_x=100,x_gt0=1,times=10,iter=200,alpha=1e-3,beta=1e-3,lambda_w=1e-3,regenerate=False,heter=True):
+def main_multitimes_logx(D_x=100,x_gt0=1,times=10,iter=200,alpha=1e-3,beta=1e-3,lambda_w=1e-3,regenerate=False,heter_mean=True):
     x_gt=x_gt0*np.ones(D_x)
 
     if regenerate:
-        if heter:
-            generate_all_dataset_heter(x_gt)#run when x_gt is changed
+        if heter_mean:
+            generate_all_dataset_heter_mean(x_gt)#run when x_gt is changed
             save_train_and_test_data()#run when x_gt is changed
             time.sleep(5)
         else:
@@ -183,12 +183,12 @@ def main_multitimes_logx(D_x=100,x_gt0=1,times=10,iter=200,alpha=1e-3,beta=1e-3,
 
     multiplot_all_logx(train_data,test_data,lambda_w=lambda_w,alpha=alpha,beta=beta,times=times)
 
-def main_multilambda(D_x=100,x_gt0=1,times=10,iter=200,alpha=1e-3,beta=1e-3,lambda_w=[1e-3,1e-1,1e+1],regenerate=False,heter=True):
+def main_multilambda(D_x=100,x_gt0=1,times=10,iter=200,alpha=1e-3,beta=1e-3,lambda_w=[1e-3,1e-1,1e+1],regenerate=False,heter_mean=True):
     x_gt=x_gt0*np.ones(D_x)
 
     if regenerate:
-        if heter:
-            generate_all_dataset_heter(x_gt)#run when x_gt is changed
+        if heter_mean:
+            generate_all_dataset_heter_mean(x_gt)#run when x_gt is changed
             save_train_and_test_data()#run when x_gt is changed
             time.sleep(5)
         else:
@@ -207,12 +207,12 @@ def main_multilambda(D_x=100,x_gt0=1,times=10,iter=200,alpha=1e-3,beta=1e-3,lamb
             AG_main(train_data,test_data,init_point=init_point,iter=iter,x_gt=x_gt,lr=[alpha,beta],lambda_w=lambda_w[i],filename="lambda_"+str(lambda_w[i])+"_"+str(j))
     multilambda_plot_all(train_data,test_data,lambda_w=lambda_w,alpha=alpha,beta=beta,times=times)
 
-def main_multilambda_logx(D_x=100,x_gt0=1,times=10,iter=200,alpha=1e-3,beta=1e-3,lambda_w=[1e-3,1e-1,1e+1],regenerate=False,heter=True):
+def main_multilambda_logx(D_x=100,x_gt0=1,times=10,iter=200,alpha=1e-3,beta=1e-3,lambda_w=[1e-3,1e-1,1e+1],regenerate=False,heter_mean=True):
     x_gt=x_gt0*np.ones(D_x)
 
     if regenerate:
-        if heter:
-            generate_all_dataset_heter(x_gt)#run when x_gt is changed
+        if heter_mean:
+            generate_all_dataset_heter_mean(x_gt)#run when x_gt is changed
             save_train_and_test_data()#run when x_gt is changed
             time.sleep(5)
         else:
@@ -232,10 +232,10 @@ def main_multilambda_logx(D_x=100,x_gt0=1,times=10,iter=200,alpha=1e-3,beta=1e-3
     multilambda_plot_all_logx(train_data,test_data,lambda_w=lambda_w,alpha=alpha,beta=beta,times=times)
 
 if __name__=="__main__":
-    main_one_time(D_x=100,x_gt0=1,init_x0=0,iter=500,alpha=2e-1,beta=2e-3,lambda_w=1e-2,regenerate=True,heter=True)
+    #main_one_time(D_x=100,x_gt0=1,init_x0=0,iter=500,alpha=3e-1,beta=3e-3,lambda_w=1e-4,regenerate=True,heter_mean=True)
 
-    main_multitimes(D_x=100,x_gt0=1,times=10,iter=500,alpha=2e-1,beta=2e-3,lambda_w=1e-2,regenerate=False,heter=True)
-    main_multilambda(D_x=100,x_gt0=1,times=10,iter=500,alpha=2e-1,beta=2e-3,lambda_w=[1e-4,1e-1,1e+2],regenerate=False,heter=True)
+    #main_multitimes(D_x=100,x_gt0=1,times=10,iter=500,alpha=3e-1,beta=3e-3,lambda_w=1e-2,regenerate=False,heter_mean=True)
+    #main_multilambda(D_x=100,x_gt0=1,times=10,iter=500,alpha=3e-1,beta=3e-3,lambda_w=[1e-4,1e-1,1e+2],regenerate=False,heter_mean=True)
 
-    main_multitimes_logx(D_x=100,x_gt0=1,times=10,iter=500,alpha=2e-1,beta=2e-3,lambda_w=1e-2,regenerate=True,heter=True)
-    main_multilambda_logx(D_x=100,x_gt0=1,times=10,iter=500,alpha=2e-1,beta=2e-3,lambda_w=[1e-4,1e-1,1e+2],regenerate=False,heter=True)
+    #main_multitimes_logx(D_x=100,x_gt0=1,times=10,iter=500,alpha=3e-1,beta=1e-1,lambda_w=1e-5,regenerate=True,heter_mean=True)
+    main_multilambda_logx(D_x=100,x_gt0=1,times=10,iter=500,alpha=3e-1,beta=3e-3,lambda_w=[1e-7,1e-5,1e-3],regenerate=False,heter_mean=True)

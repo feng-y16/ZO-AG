@@ -8,13 +8,13 @@ def sigmoid_truncated(x):
     else: 
         return 0
 
-def generate_data(n,sigma2,x):#generate a dataset
+def generate_data(n,sigma2,x,noise_std=1e-3):#generate a dataset
     m=len(x)
     data=np.zeros((n,m+1))
     sigma=np.sqrt(sigma2)
     for i in range(0,n):
         a=np.random.normal(0, sigma, m)
-        noise=np.random.normal(0, 1e-3)
+        noise=np.random.normal(0, noise_std)
         c=sigmoid_truncated((a.T).dot(x)+noise)
         data[i][0:m]=a
         data[i][m]=c
@@ -23,8 +23,8 @@ def generate_data(n,sigma2,x):#generate a dataset
 def save_data(filename,data):#save a dataset, here filename do not need ".npz"
     np.savez(filename,data=data)
 
-def generate_original_data(n,sigma2,x,filename):#generate+save
-    data=generate_data(n,sigma2,x)
+def generate_original_data(n,sigma2,x,filename,noise_std=1e-3):#generate+save
+    data=generate_data(n,sigma2,x,noise_std=noise_std)
     save_data(filename,data)
 
 def generate_train_and_test_data(train_ratio,filename,shuffle=False):#load generated data, get trainning and testing data
@@ -47,11 +47,21 @@ def generate_all_dataset(x=[1,1],filename=["D1","D2","D3"],N=[800,1000,500],sigm
     for i in range(0,len(filename)):
         generate_original_data(N[i],sigma2[i],x,filename[i])
 
-def generate_all_dataset_heter(x=[1,1],filename=["D1","D2","D3"],N=[500,500,500,500,500,500,500],sigma2=[1,7,5,5,0.1,10]):
+def generate_all_dataset_heter_var(x=[1,1],filename=["D1","D2","D3"],N=[500,500,500,500,500,500],sigma=[1,7,5,5,0.1,10]):
     for i in range(0,3):
-        data1=generate_data(N[2*i],sigma2[2*i],x)
-        data2=generate_data(N[2*i+1],sigma2[2*i+1],x)
+        data1=generate_data(N[2*i],sigma[2*i],x)
+        data2=generate_data(N[2*i+1],sigma[2*i+1],x)
         data=np.concatenate((data1,data2))
+        save_data(filename[i],data)
+
+def generate_all_dataset_heter_mean(x=[1,1],filename=["D1","D2","D3"],N=[1000,1000,1000],sigma=[20,1,1],multiplier=0.5,noise_std=[5,0.1,0.1]):
+    data=generate_data(N[0],sigma[0],x,noise_std[0])
+    save_data(filename[0],data)
+    for i in range(1,3):
+        x_temp=x
+        x_temp=np.array(x_temp)
+        x_temp=x_temp+np.random.uniform(-multiplier,multiplier,len(x))
+        data=generate_data(N[i],sigma[i],x_temp,noise_std[i])
         save_data(filename[i],data)
 
 def save_train_and_test_data(shuffle=False,train_ratio=0.7,filename=["D1","D2","D3"]):#for generated datasets, divide them into training and testing part, and save

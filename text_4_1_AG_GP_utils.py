@@ -151,8 +151,8 @@ def ZOSIGNSGD_bounded(func,x0,bound,step,lr=0.1,iter=100,Q=10,project=project_bo
             x_opt=x_temp
         else:
             flag1=flag1+1
-            if flag1%3==0:
-                lr=lr*0.98
+            #if flag1%3==0:
+            #    lr=lr*0.98
     return x_opt
 
 def ZOPSGD(func,x0,step,lr=0.1,iter=100,Q=10):
@@ -185,8 +185,8 @@ def ZOPSGD(func,x0,step,lr=0.1,iter=100,Q=10):
             x_opt=x_temp
         else:
             flag=flag+1
-            if flag%2==0:
-                lr=lr*0.98
+            #if flag%2==0:
+            #    lr=lr*0.98
     return x_opt
 
 def ZOPSGA(func,x0,step,lr=0.1,iter=100,Q=10):
@@ -219,8 +219,8 @@ def ZOPSGA(func,x0,step,lr=0.1,iter=100,Q=10):
             x_opt=x_temp
         else:
             flag=flag+1
-            if flag%2==0:
-                lr=lr*0.98
+            #if flag%2==0:
+            #    lr=lr*0.98
     return x_opt
 
 def ZOPSGD_bounded(func,x0,bound,step,lr=0.1,iter=100,Q=10,project=project_bound):
@@ -253,8 +253,8 @@ def ZOPSGD_bounded(func,x0,bound,step,lr=0.1,iter=100,Q=10,project=project_bound
             x_opt=x_temp
         else:
             flag1=flag1+1
-            if flag1%3==0:
-                lr=lr*0.98
+            #if flag1%3==0:
+            #    lr=lr*0.98
     return x_opt
 
 def ZOPSGA_bounded(func,x0,bound,step,lr=0.1,iter=100,Q=10,project=project_bound):
@@ -287,8 +287,8 @@ def ZOPSGA_bounded(func,x0,bound,step,lr=0.1,iter=100,Q=10,project=project_bound
             x_opt=x_temp
         else:
             flag1=flag1+1
-            if flag1%3==0:
-                lr=lr*0.98
+            #if flag1%3==0:
+            #    lr=lr*0.98
     return x_opt
 
 def ZOPSGD_bounded_f(func,x0,dis_f,epsilon,step,x_cen,lr=0.1,iter=100,Q=10,project=project_f_l2):
@@ -321,8 +321,8 @@ def ZOPSGD_bounded_f(func,x0,dis_f,epsilon,step,x_cen,lr=0.1,iter=100,Q=10,proje
             x_opt=x_temp
         else:
             flag1=flag1+1
-            if flag1%3==0:
-                lr=lr*0.98
+            #if flag1%3==0:
+            #    lr=lr*0.98
     return x_opt
 
 def ZOPSGA_bounded_f(func,x0,dis_f,epsilon,step,x_cen,lr=0.1,iter=100,Q=10,project=project_f_l2):
@@ -356,8 +356,8 @@ def ZOPSGA_bounded_f(func,x0,dis_f,epsilon,step,x_cen,lr=0.1,iter=100,Q=10,proje
             x_opt=x_temp
         else:
             flag1=flag1+1
-            if flag1%3==0:
-                lr=lr*0.98
+            #if flag1%3==0:
+            #    lr=lr*0.98
     return x_opt
 
 def ZOPSGA_simplex(func,x0,step,lr=0.1,iter=100,Q=10,project=project_simplex):
@@ -390,8 +390,8 @@ def ZOPSGA_simplex(func,x0,step,lr=0.1,iter=100,Q=10,project=project_simplex):
             x_opt=x_temp
         else:
             flag1=flag1+1
-            if flag1%3==0:
-                lr=lr*0.98
+            #if flag1%3==0:
+            #    lr=lr*0.98
     return x_opt
 
 def AG_minmax_bounded_simplex(func,x0,y0,step,lr,bound_x,iter=20,inner_iter=1):
@@ -433,8 +433,8 @@ def AG_minmax_bounded_simplex(func,x0,y0,step,lr,bound_x,iter=20,inner_iter=1):
             best_f=temp_f
         else:
             flag=flag+1
-            if flag%3==0:
-                lr[0]=lr[0]*0.98
+            #if flag%3==0:
+            #    lr[0]=lr[0]*0.98
     return x_opt,AG_iter_res,AG_time
 
 def AG_run(func,x0,y0,step,lr,iter=20,inner_iter=1):
@@ -490,8 +490,8 @@ def Average_run(func,x0,step,D_w=3,lr=0.1,iter=100,Q=10,project=project_bound):
             x_opt=x_temp
         else:
             flag1=flag1+1
-            if flag1%3==0:
-                lr=lr*0.98
+            #if flag1%3==0:
+            #    lr=lr*0.98
     return x_opt,Average_iter_res,Average_time
 
 def FO_run(func,data_all,x0,w0,lambda_w,lr,iter=100,project=project_simplex):
@@ -541,8 +541,8 @@ def FO_run(func,data_all,x0,w0,lambda_w,lr,iter=100,project=project_simplex):
             x_opt=x_temp
         else:
             flag1=flag1+1
-            if flag1%3==0:
-                lr=lr*0.98
+            #if flag1%3==0:
+            #    lr=lr*0.98
     return x_opt,FO_iter_res,FO_time
 
 if __name__=="__main__":
