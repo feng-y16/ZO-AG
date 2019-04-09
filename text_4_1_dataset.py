@@ -80,6 +80,20 @@ def load_train_and_test_data():#load training and testing data
     test_data=np.load("test.npz")
     return train_data['train_data'],test_data['test_data']
 
+def generate_index(length,b,iter,num_of_dataset):
+    index=[]
+    for i in range(0,iter):
+        temp=np.zeros((num_of_dataset,b))
+        for j in range(0,num_of_dataset):
+            temp[j]=np.array(random.sample(range(0,length-1),b));
+        index.append(temp)
+    np.savez("index",index=index)
+
+def load_index():
+    index=np.load("index.npz")
+    index=index['index']
+    return index
+
 if __name__=="__main__":
     n=10
     sigma2=1
