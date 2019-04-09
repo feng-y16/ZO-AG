@@ -156,7 +156,7 @@ def main_multitimes_logx_batch(D_x=100,x_gt0=1,times=10,b=100,iter=200,alpha=1e-
     x_gt=x_gt0*np.ones(D_x)
 
     if regenerate:
-        generate_index(length=700,b=50,iter=iter,num_of_dataset=3)
+        generate_index(length=700,b=b,iter=iter,num_of_dataset=3)
         if heter_mean:
             generate_all_dataset_heter_mean(x_gt)#run when x_gt is changed
             save_train_and_test_data()#run when x_gt is changed
@@ -238,5 +238,5 @@ if __name__=="__main__":
     #main_multitimes_batch(D_x=100,x_gt0=1,times=10,b=100,iter=500,alpha=3e-1,beta=3e-3,lambda_w=1e-2,regenerate=False,heter_mean=True)
     #main_multilambda_batch(D_x=100,x_gt0=1,times=10,b=100,iter=500,alpha=3e-1,beta=3e-3,lambda_w=[1e-4,1e-1,1e+2],regenerate=False,heter_mean=True)
 
-    main_multitimes_logx_batch(D_x=100,x_gt0=1,times=10,b=500,iter=500,alpha=3e-1,beta=1e-1,lambda_w=1e-5,regenerate=True,heter_mean=True)
-    main_multilambda_logx_batch(D_x=100,x_gt0=1,times=10,b=500,iter=500,alpha=3e-1,beta=1e-1,lambda_w=[1e-7,1e-5,1e-3],regenerate=False,heter_mean=True)
+    main_multitimes_logx_batch(D_x=100,x_gt0=1,times=5,b=100,iter=500,alpha=3e-1,beta=1e-1,lambda_w=1e-5,regenerate=True,heter_mean=True)
+    #main_multilambda_logx_batch(D_x=100,x_gt0=1,times=10,b=100,iter=500,alpha=3e-1,beta=1e-1,lambda_w=[1e-7,1e-5,1e-3],regenerate=False,heter_mean=True)
