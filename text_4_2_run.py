@@ -27,13 +27,19 @@ def AG_minmax(func,delta0,x0,step,lr,epsilon,iter=20,inner_iter=1):
             return func(delta,x_opt)
         delta_opt=ZOPSGD_bounded(func_xfixed,delta_opt,epsilon,step[0],lr[0],inner_iter)
 
+        #print(x_opt)
+        #print(delta_opt)
         temp_f=func_xfixed(delta_opt)
         if i%10 == 0:
-            print("ZO-AG for Min-Max: Iter = %d, lr_x=%f, obj = %3.4f" % (i, lr[0], temp_f) )
+            print("ZO-AG for Min-Max: Iter = %d, lr_delta=%f, lr_x=%f, obj = %3.4f" % (i, lr[0], lr[1], temp_f) )
             print("x_max=",end="")
             print(max(x_opt))
             print("x_min=",end="")
             print(min(x_opt))
+            print("delta_max=",end="")
+            print(max(delta_opt))
+            print("delta_min=",end="")
+            print(min(delta_opt))
         #print("x_opt=",end="")
         #print(x_opt)
         #print("step_x=",end="")
@@ -91,19 +97,65 @@ def FO_run(func,data,delta0,x0,epsilon,lambda_x,lr,iter=100,project=project_inf)
         #print("loss=",end="")
         #print(y_temp)
         if i%10 == 0:
-            print("FO for Min-Max: Iter = %d, lr_x=%f, obj = %3.4f" % (i, lr[0], y_temp) )
+            print("FO for Min-Max: Iter = %d, lr_delta=%f, lr_x=%f, obj = %3.4f" % (i, lr[0], lr[1], y_temp) )
             print("x_max=",end="")
             print(max(x_opt))
             print("x_min=",end="")
             print(min(x_opt))
+            print("delta_max=",end="")
+            print(max(delta_opt))
+            print("delta_min=",end="")
+            print(min(delta_opt))
         if y_temp<func(delta_opt,x_opt):
             best_f=y_temp
-            x_opt=x_temp
+            delta_opt=delta_temp
         else:
             flag1=flag1+1
             #if flag1%3==0:
             #    lr=lr*0.98
     return x_opt,FO_iter_res,FO_time
+
+def BL_run(func,data,x0,lambda_x,lr,iter=100):
+    lr=np.array(lr)
+    BL_iter_res=np.zeros((iter,2*len(x0)))
+    BL_time=np.zeros(iter)
+    D_x=len(x0)
+    D_d=D_x
+    delta_opt=np.zeros(D_d)
+    x_opt=x0
+    best_f=func(x_opt)
+    sigma=1
+    flag1=0
+
+    for i in range(0,iter):
+        BL_time[i]=time.time()
+        BL_iter_res[i][0:D_d]=delta_opt
+        BL_iter_res[i][D_d:D_d+D_x]=x_opt
+
+        dx=loss_derivative_x(delta_opt,x_opt,lambda_x,data)
+        x_temp=x_opt+dx*lr[1]
+        y_temp=func(x_temp)
+        if y_temp>func(x_opt):
+            x_opt=x_temp
+        else:
+            flag1=flag1+1
+            #if flag1%3==0:
+            #    lr=lr*0.98
+        #print("x_opt=",end="")
+        #print(x_temp)
+        #print("lr=",end="")
+        #print(lr)
+        #print("step=",end="")
+        #print(step)
+        #print("loss=",end="")
+        #print(y_temp)
+        if i%10 == 0:
+            print("BL for Min-Max: Iter = %d, lr_delta=%f, lr_x=%f, obj = %3.4f" % (i, lr[0], lr[1], y_temp) )
+            print("x_max=",end="")
+            print(max(x_opt))
+            print("x_min=",end="")
+            print(min(x_opt))
+    return x_opt,BL_iter_res,BL_time
 
 def AG_minmax_batch(func,delta0,x0,index,step,lr,epsilon,iter=20,inner_iter=1):
     delta_opt=delta0
@@ -129,17 +181,15 @@ def AG_minmax_batch(func,delta0,x0,index,step,lr,epsilon,iter=20,inner_iter=1):
 
         temp_f=func_xfixed(delta_opt)
         if i%10 == 0:
-            print("ZO-AG for Min-Max: Iter = %d, lr_x=%f, obj = %3.4f" % (i, lr[0], temp_f) )
+            print("ZO-AG for Min-Max: Iter = %d, lr_delta=%f, lr_x=%f, obj = %3.4f" % (i, lr[0], lr[1], temp_f) )
             print("x_max=",end="")
             print(max(x_opt))
             print("x_min=",end="")
             print(min(x_opt))
-        #print("x_opt=",end="")
-        #print(x_opt)
-        #print("step_x=",end="")
-        #print(step[0])
-        #print("lr_x=",end="")
-        #print(lr[0])
+            print("delta_max=",end="")
+            print(max(delta_opt))
+            print("delta_min=",end="")
+            print(min(delta_opt))
         if temp_f<best_f:
             best_f=temp_f
         else:
@@ -191,11 +241,15 @@ def FO_run_batch(func,data,delta0,x0,index,epsilon,lambda_x,lr,iter=100,project=
         #print("loss=",end="")
         #print(y_temp)
         if i%10 == 0:
-            print("FO for Min-Max: Iter = %d, lr_x=%f, obj = %3.4f" % (i, lr[0], y_temp) )
+            print("FO for Min-Max: Iter = %d, lr_delta=%f, lr_x=%f, obj = %3.4f" % (i, lr[0], lr[1], y_temp) )
             print("x_max=",end="")
             print(max(x_opt))
             print("x_min=",end="")
             print(min(x_opt))
+            print("delta_max=",end="")
+            print(max(delta_opt))
+            print("delta_min=",end="")
+            print(min(delta_opt))
         if y_temp<func(delta_opt,x_opt,index[i]):
             best_f=y_temp
             x_opt=x_temp
@@ -204,3 +258,45 @@ def FO_run_batch(func,data,delta0,x0,index,epsilon,lambda_x,lr,iter=100,project=
             #if flag1%3==0:
             #    lr=lr*0.98
     return x_opt,FO_iter_res,FO_time
+
+def BL_run_batch(func,data,x0,index,lambda_x,lr,iter=100):
+    lr=np.array(lr)
+    BL_iter_res=np.zeros((iter,2*len(x0)))
+    BL_time=np.zeros(iter)
+    D_x=len(x0)
+    D_d=D_x
+    delta_opt=np.zeros(D_d)
+    x_opt=x0
+    best_f=func(x_opt,index[0])
+    sigma=1
+    flag1=0
+
+    for i in range(0,iter):
+        BL_time[i]=time.time()
+        BL_iter_res[i][0:D_d]=delta_opt
+        BL_iter_res[i][D_d:D_d+D_x]=x_opt
+
+        dx=loss_derivative_x_index(delta_opt,x_opt,lambda_x,data,index[i])
+        x_temp=x_opt+dx*lr[1]
+        y_temp=func(x_temp,index[i])
+        if y_temp>func(x_opt,index[i]):
+            x_opt=x_temp
+        else:
+            flag1=flag1+1
+            #if flag1%3==0:
+            #    lr=lr*0.98
+        #print("x_opt=",end="")
+        #print(x_temp)
+        #print("lr=",end="")
+        #print(lr)
+        #print("step=",end="")
+        #print(step)
+        #print("loss=",end="")
+        #print(y_temp)
+        if i%10 == 0:
+            print("BL for Min-Max: Iter = %d, lr_delta=%f, lr_x=%f, obj = %3.4f" % (i, lr[0], lr[1], y_temp) )
+            print("x_max=",end="")
+            print(max(x_opt))
+            print("x_min=",end="")
+            print(min(x_opt))
+    return x_opt,BL_iter_res,BL_time

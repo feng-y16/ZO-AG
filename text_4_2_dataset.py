@@ -39,7 +39,7 @@ def generate_train_and_test_data(train_ratio,filename,shuffle=False):#load gener
     #print(test_data)
     return train_data,test_data
 
-def generate_all_dataset(x=[1,1],filename=["D"],N=[1000],sigma=[5],noise_std=[0.2]):
+def generate_all_dataset(x=[1,1],filename=["D"],N=[1000],sigma=[1],noise_std=[0.2]):
     data=generate_data(N[0],sigma[0],x,noise_std[0])
     save_data(filename[0],data)
 

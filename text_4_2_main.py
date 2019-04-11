@@ -11,6 +11,7 @@ from text_4_2_run import*
 def AG_main(train_data,test_data,init_point,epsilon=0.5,iter=500,x_gt=[1,1],lr=[1e-3,1e-3],lambda_x=1,filename=None):
 
     D=len(x_gt)
+    lr=lr/np.sqrt(D)#改变学习率
     delta0,flag0=project_inf(init_point[0:D],epsilon)
     x0=init_point[D:2*D]
 
@@ -57,6 +58,31 @@ def FO_main(train_data,test_data,init_point,epsilon=0.5,iter=500,x_gt=[1,1],lr=[
         np.savez("FO_4_2_"+filename+".npz",x_gt=x_gt,FO_iter_res=FO_iter_res,FO_time=FO_time)
     return train_data,test_data
 
+def BL_main(train_data,test_data,init_point,epsilon=0.5,iter=500,x_gt=[1,1],lr=[1e-3,1e-3],lambda_x=1,filename=None):
+ 
+    D=len(x_gt)
+    delta0,flag0=project_inf(init_point[0:D],epsilon)
+    x0=init_point[D:2*D]
+
+    def loss_BL(x):
+        loss=loss_function(np.zeros(D),x,lambda_x,train_data)
+        return loss
+
+    print("##################################################################")
+    print("Baseline method")
+    time_start=time.time()
+    x_opt,BL_iter_res,BL_time=BL_run(loss_BL,train_data,x0,lambda_x,lr=lr,iter=iter)
+    print("Decision:",end="")
+    print(x_opt)
+    time_end=time.time()
+    print('Time cost of baseline:',time_end-time_start,"s")
+
+    if filename==None:
+        np.savez("BL_4_2.npz",x_gt=x_gt,BL_iter_res=BL_iter_res,BL_time=BL_time)
+    else:
+        np.savez("BL_4_2_"+filename+".npz",x_gt=x_gt,BL_iter_res=BL_iter_res,BL_time=BL_time)
+    return train_data,test_data
+
 def main_one_time(D_x=100,x_gt0=1,init_x0=0,epsilon=0.5,iter=200,alpha=1e-3,beta=1e-3,lambda_x=1e-3,regenerate=False):
     x_gt=x_gt0*np.ones(D_x)
     init_point=init_x0*np.ones(2*D_x)
@@ -68,12 +94,12 @@ def main_one_time(D_x=100,x_gt0=1,init_x0=0,epsilon=0.5,iter=200,alpha=1e-3,beta
 
     train_data,test_data=load_train_and_test_data()
 
-    AG_main(train_data,test_data,init_point=init_point,epsilon=0.5,iter=iter,x_gt=x_gt,lr=[alpha,beta],lambda_x=lambda_x)
-    FO_main(train_data,test_data,init_point=init_point,epsilon=0.5,iter=iter,x_gt=x_gt,lr=[alpha,beta],lambda_x=lambda_x)
+    AG_main(train_data,test_data,init_point=init_point,epsilon=epsilon,iter=iter,x_gt=x_gt,lr=[alpha,beta],lambda_x=lambda_x)
+    FO_main(train_data,test_data,init_point=init_point,epsilon=epsilon,iter=iter,x_gt=x_gt,lr=[alpha,beta],lambda_x=lambda_x)
+    BL_main(train_data,test_data,init_point=init_point,epsilon=epsilon,iter=iter,x_gt=x_gt,lr=[alpha,beta],lambda_x=lambda_x)
+    AG_FO_plot_all(train_data,test_data,lambda_x=lambda_x,alpha=alpha,beta=beta,epsilon=epsilon)
 
-    AG_FO_plot_all(train_data,test_data,lambda_x=lambda_x,alpha=alpha,beta=beta)
-
-def main_multitimes(D_x=100,x_gt0=1,epsilon=0.5,times=10,iter=200,alpha=1e-3,beta=1e-3,lambda_x=1e-3,regenerate=False):
+def main_multitimes(D_x=100,x_gt0=1,times=10,epsilon=0.5,iter=200,alpha=1e-3,beta=1e-3,lambda_x=1e-3,regenerate=False):
     x_gt=x_gt0*np.ones(D_x)
 
     if regenerate:
@@ -84,12 +110,12 @@ def main_multitimes(D_x=100,x_gt0=1,epsilon=0.5,times=10,iter=200,alpha=1e-3,bet
     train_data,test_data=load_train_and_test_data()
     for i in range(0,times):
         init_point=np.random.normal(0, 1, 2*D_x)
-        AG_main(train_data,test_data,init_point=init_point,epsilon=0.5,iter=iter,x_gt=x_gt,lr=[alpha,beta],lambda_x=lambda_x,filename=str(i))
-        FO_main(train_data,test_data,init_point=init_point,epsilon=0.5,iter=iter,x_gt=x_gt,lr=[alpha,beta],lambda_x=lambda_x,filename=str(i))
+        AG_main(train_data,test_data,init_point=init_point,epsilon=epsilon,iter=iter,x_gt=x_gt,lr=[alpha,beta],lambda_x=lambda_x,filename=str(i))
+        FO_main(train_data,test_data,init_point=init_point,epsilon=epsilon,iter=iter,x_gt=x_gt,lr=[alpha,beta],lambda_x=lambda_x,filename=str(i))
+        BL_main(train_data,test_data,init_point=init_point,epsilon=epsilon,iter=iter,x_gt=x_gt,lr=[alpha,beta],lambda_x=lambda_x,filename=str(i))
+    multiplot_all(train_data,test_data,lambda_x=lambda_x,alpha=alpha,beta=beta,times=times,epsilon=epsilon)
 
-    multiplot_all(train_data,test_data,lambda_x=lambda_x,alpha=alpha,beta=beta,times=times)
-
-def main_multitimes_logx(D_x=100,x_gt0=1,epsilon=0.5,times=10,iter=200,alpha=1e-3,beta=1e-3,lambda_x=1e-3,regenerate=False):
+def main_multitimes_logx(D_x=100,x_gt0=1,times=10,epsilon=0.5,iter=200,alpha=1e-3,beta=1e-3,lambda_x=1e-3,regenerate=False):
     x_gt=x_gt0*np.ones(D_x)
 
     if regenerate:
@@ -100,12 +126,12 @@ def main_multitimes_logx(D_x=100,x_gt0=1,epsilon=0.5,times=10,iter=200,alpha=1e-
     train_data,test_data=load_train_and_test_data()
     for i in range(0,times):
         init_point=np.random.normal(0, 1, 2*D_x)
-        AG_main(train_data,test_data,init_point=init_point,epsilon=0.5,iter=iter,x_gt=x_gt,lr=[alpha,beta],lambda_x=lambda_x,filename=str(i))
-        FO_main(train_data,test_data,init_point=init_point,epsilon=0.5,iter=iter,x_gt=x_gt,lr=[alpha,beta],lambda_x=lambda_x,filename=str(i))
+        AG_main(train_data,test_data,init_point=init_point,epsilon=epsilon,iter=iter,x_gt=x_gt,lr=[alpha,beta],lambda_x=lambda_x,filename=str(i))
+        FO_main(train_data,test_data,init_point=init_point,epsilon=epsilon,iter=iter,x_gt=x_gt,lr=[alpha,beta],lambda_x=lambda_x,filename=str(i))
+        BL_main(train_data,test_data,init_point=init_point,epsilon=epsilon,iter=iter,x_gt=x_gt,lr=[alpha,beta],lambda_x=lambda_x,filename=str(i))
+    multiplot_all_logx(train_data,test_data,lambda_x=lambda_x,alpha=alpha,beta=beta,times=times,epsilon=epsilon)
 
-    multiplot_all_logx(train_data,test_data,lambda_x=lambda_x,alpha=alpha,beta=beta,times=times)
-
-def main_multilambda(D_x=100,x_gt0=1,epsilon=0.5,times=10,iter=200,alpha=1e-3,beta=1e-3,lambda_x=[1e-3,1e-1,1e+1],regenerate=False):
+def main_multilambda(D_x=100,x_gt0=1,times=10,epsilon=0.5,iter=200,alpha=1e-3,beta=1e-3,lambda_x=[1e-3,1e-1,1e+1],regenerate=False):
     x_gt=x_gt0*np.ones(D_x)
 
     if regenerate:
@@ -118,10 +144,10 @@ def main_multilambda(D_x=100,x_gt0=1,epsilon=0.5,times=10,iter=200,alpha=1e-3,be
     for i in range(0,len(lambda_x)):
         for j in range(0,times):
             init_point=np.random.normal(0, 1, 2*D_x)
-            AG_main(train_data,test_data,init_point=init_point,epsilon=0.5,iter=iter,x_gt=x_gt,lr=[alpha,beta],lambda_x=lambda_x[i],filename="lambda_"+str(lambda_x[i])+"_"+str(j))
-    multilambda_plot_all(train_data,test_data,lambda_x=lambda_x,alpha=alpha,beta=beta,times=times)
+            AG_main(train_data,test_data,init_point=init_point,epsilon=epsilon,iter=iter,x_gt=x_gt,lr=[alpha,beta],lambda_x=lambda_x[i],filename="lambda_"+str(lambda_x[i])+"_"+str(j))
+    multilambda_plot_all(train_data,test_data,lambda_x=lambda_x,alpha=alpha,beta=beta,times=times,epsilon=epsilon)
 
-def main_multilambda_logx(D_x=100,x_gt0=1,epsilon=0.5,times=10,iter=200,alpha=1e-3,beta=1e-3,lambda_x=[1e-3,1e-1,1e+1],regenerate=False,heter_mean=True):
+def main_multilambda_logx(D_x=100,x_gt0=1,times=10,epsilon=0.5,iter=200,alpha=1e-3,beta=1e-3,lambda_x=[1e-3,1e-1,1e+1],regenerate=False,heter_mean=True):
     x_gt=x_gt0*np.ones(D_x)
 
     if regenerate:
@@ -134,14 +160,14 @@ def main_multilambda_logx(D_x=100,x_gt0=1,epsilon=0.5,times=10,iter=200,alpha=1e
     for i in range(0,len(lambda_x)):
         for j in range(0,times):
             init_point=np.random.normal(0, 1, 2*D_x)
-            AG_main(train_data,test_data,init_point=init_point,epsilon=0.5,iter=iter,x_gt=x_gt,lr=[alpha,beta],lambda_x=lambda_x[i],filename="lambda_"+str(lambda_x[i])+"_"+str(j))
-    multilambda_plot_all_logx(train_data,test_data,lambda_x=lambda_x,alpha=alpha,beta=beta,times=times)
+            AG_main(train_data,test_data,init_point=init_point,epsilon=epsilon,iter=iter,x_gt=x_gt,lr=[alpha,beta],lambda_x=lambda_x[i],filename="lambda_"+str(lambda_x[i])+"_"+str(j))
+    multilambda_plot_all_logx(train_data,test_data,lambda_x=lambda_x,alpha=alpha,beta=beta,times=times,epsilon=epsilon)
 
 if __name__=="__main__":
-    main_one_time(D_x=100,x_gt0=1,epsilon=0.5,init_x0=0,iter=100,alpha=3e-1,beta=3e-3,lambda_x=1e-4,regenerate=False)
+    #main_one_time(D_x=100,x_gt0=1,init_x0=0,epsilon=0.5,iter=500,alpha=1e-2,beta=2e-1,lambda_x=1e-4,regenerate=True)
 
-    #main_multitimes(D_x=100,x_gt0=1,epsilon=0.5,times=2,iter=50,alpha=3e-1,beta=3e-3,lambda_x=1e-2,regenerate=False)
-    #main_multilambda(D_x=100,x_gt0=1,epsilon=0.5,times=2,iter=50,alpha=3e-1,beta=3e-3,lambda_x=[1e-4,1e-1,1e+2],regenerate=False)
+    #main_multitimes(D_x=100,x_gt0=1,times=10,epsilon=0.5,iter=500,alpha=1e-2,beta=2e-1,lambda_x=1e-4,regenerate=False)
+    #main_multilambda(D_x=100,x_gt0=1,times=10,epsilon=0.5,iter=500,alpha=1e-2,beta=2e-1,lambda_x=[1e-7,1e-4,1e-1],regenerate=False)
 
-    #main_multitimes_logx(D_x=100,x_gt0=1,epsilon=0.5,times=2,iter=50,alpha=3e-1,beta=1e-1,lambda_x=1e-5,regenerate=False)
-    #main_multilambda_logx(D_x=100,x_gt0=1,epsilon=0.5,times=2,iter=50,alpha=3e-1,beta=1e-1,lambda_x=[1e-7,1e-5,1e-3],regenerate=False)
+    main_multitimes_logx(D_x=100,x_gt0=1,times=10,epsilon=0.5,iter=500,alpha=1e-2,beta=2e-1,lambda_x=1e-4,regenerate=False)
+    main_multilambda_logx(D_x=100,x_gt0=1,times=10,epsilon=0.5,iter=500,alpha=1e-2,beta=2e-1,lambda_x=[1e-7,1e-4,1e-1],regenerate=False)
