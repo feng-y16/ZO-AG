@@ -252,7 +252,7 @@ def FO_run_batch(func,data,delta0,x0,index,epsilon,lambda_x,lr,iter=100,project=
             print(min(delta_opt))
         if y_temp<func(delta_opt,x_opt,index[i]):
             best_f=y_temp
-            x_opt=x_temp
+            delta_opt=delta_temp
         else:
             flag1=flag1+1
             #if flag1%3==0:

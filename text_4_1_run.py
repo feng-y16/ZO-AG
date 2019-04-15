@@ -12,7 +12,7 @@ def AG_minmax_bounded_simplex(func,x0,y0,step,lr,bound_x,iter=20,inner_iter=1):
     D_x=len(x0)
     D_y=len(y0)
     flag=0
-    best_f=1000000
+    best_f=func(np.hstack((x0,y0)))
     AG_iter_res=np.zeros((iter,len(x0)+len(y0)))
     AG_time=np.zeros(iter)
     for i in range(0,iter):

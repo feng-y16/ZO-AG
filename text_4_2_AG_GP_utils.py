@@ -11,7 +11,7 @@ def loss_function(delta,x,lambda_x,data):#compute loss for a dataset
     c=data[:,length-1]
     #print(delta)
     h=1.0/(1+np.exp(-a.dot(x+delta)))
-    value=c.dot(np.log(h+1e-15))+(1-c).dot(np.log(1-h+1e-15))/num-lambda_x*np.linalg.norm(x,2)
+    value=(c.dot(np.log(h+1e-15))+(1-c).dot(np.log(1-h+1e-15)))/num-lambda_x*np.linalg.norm(x,2)**2
     return value
 
 def loss_function_index(delta,x,lambda_x,data,index):#compute loss for a dataset

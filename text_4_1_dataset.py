@@ -54,7 +54,17 @@ def generate_all_dataset_heter_var(x=[1,1],filename=["D1","D2","D3"],N=[500,500,
         data=np.concatenate((data1,data2))
         save_data(filename[i],data)
 
-def generate_all_dataset_heter_mean(x=[1,1],filename=["D1","D2","D3"],N=[1000,1000,1000],sigma=[20,1,1],multiplier=0.5,noise_std=[5,0.1,0.1]):
+#def generate_all_dataset_heter_mean(x=[1,1],filename=["D1","D2","D3"],N=[1000,1000,1000],sigma=[20,1,1],multiplier=0.5,noise_std=[5,0.1,0.1]):
+#    data=generate_data(N[0],sigma[0],x,noise_std[0])
+#    save_data(filename[0],data)
+#    for i in range(1,3):
+#        x_temp=x
+#        x_temp=np.array(x_temp)
+#        x_temp=x_temp+np.random.uniform(-multiplier,multiplier,len(x))
+#        data=generate_data(N[i],sigma[i],x_temp,noise_std[i])
+#        save_data(filename[i],data)
+
+def generate_all_dataset_heter_mean(x=[1,1],filename=["D1","D2","D3"],N=[1000,1000,1000],sigma=[5,2,2],multiplier=0,noise_std=[0.2,0.1,0.1]):
     data=generate_data(N[0],sigma[0],x,noise_std[0])
     save_data(filename[0],data)
     for i in range(1,3):
@@ -71,13 +81,13 @@ def save_train_and_test_data(shuffle=False,train_ratio=0.7,filename=["D1","D2","
         temp_train,temp_test=generate_train_and_test_data(train_ratio,filename[i],shuffle=shuffle)
         train_data.append(temp_train)
         test_data.append(temp_test)
-    np.savez("train",train_data=train_data)
-    np.savez("test",test_data=test_data)
+    np.savez("train_4_1",train_data=train_data)
+    np.savez("test_4_1",test_data=test_data)
     return train_data,test_data
 
 def load_train_and_test_data():#load training and testing data
-    train_data=np.load("train.npz")
-    test_data=np.load("test.npz")
+    train_data=np.load("train_4_1.npz")
+    test_data=np.load("test_4_1.npz")
     return train_data['train_data'],test_data['test_data']
 
 def generate_index(length,b,iter,num_of_dataset):
@@ -87,10 +97,10 @@ def generate_index(length,b,iter,num_of_dataset):
         for j in range(0,num_of_dataset):
             temp[j]=np.array(random.sample(range(0,length-1),b));
         index.append(temp)
-    np.savez("index",index=index)
+    np.savez("index_4_1",index=index)
 
 def load_index():
-    index=np.load("index.npz")
+    index=np.load("index_4_1.npz")
     index=index['index']
     return index
 

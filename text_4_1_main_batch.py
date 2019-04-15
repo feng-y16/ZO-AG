@@ -22,7 +22,7 @@ def AG_main_batch(train_data,test_data,init_point,index,iter=500,x_gt=[1,1],lr=[
         loss=0
         for i in range(0,D):
             loss=loss+w_[i]*loss_for_D_index(x_,train_data[i],index[i])
-        loss=loss-lambda_w*np.linalg.norm(w_-1.0/D*np.ones(D))
+        loss=loss-lambda_w*np.linalg.norm(w_-1.0/D*np.ones(D))**2
         return loss
 
     print("##################################################################")
@@ -48,6 +48,7 @@ def Average_main_batch(train_data,test_data,init_point,index,iter=500,x_gt=[1,1]
     #w0=1.0/D*np.ones(D)
     x0=init_point[0:D_x]
     w0=project_simplex(init_point[D_x:D_x+3])
+
     def loss_Average(x,index):
         loss=0
         for i in range(0,D):
@@ -82,7 +83,7 @@ def FO_main_batch(train_data,test_data,init_point,index,iter=500,x_gt=[1,1],lr=[
         loss=0
         for i in range(0,D):
             loss=loss+w[i]*loss_for_D_index(x,train_data[i],index[i])
-        loss=loss-lambda_w*np.linalg.norm(w-1.0/D*np.ones(D))
+        loss=loss-lambda_w*np.linalg.norm(w-1.0/D*np.ones(D))**2
         return loss
 
     print("##################################################################")
@@ -238,5 +239,5 @@ if __name__=="__main__":
     #main_multitimes_batch(D_x=100,x_gt0=1,times=10,b=100,iter=500,alpha=3e-1,beta=3e-3,lambda_w=1e-2,regenerate=False,heter_mean=True)
     #main_multilambda_batch(D_x=100,x_gt0=1,times=10,b=100,iter=500,alpha=3e-1,beta=3e-3,lambda_w=[1e-4,1e-1,1e+2],regenerate=False,heter_mean=True)
 
-    main_multitimes_logx_batch(D_x=100,x_gt0=1,times=5,b=100,iter=500,alpha=3e-1,beta=1e-1,lambda_w=1e-5,regenerate=True,heter_mean=True)
-    #main_multilambda_logx_batch(D_x=100,x_gt0=1,times=10,b=100,iter=500,alpha=3e-1,beta=1e-1,lambda_w=[1e-7,1e-5,1e-3],regenerate=False,heter_mean=True)
+    main_multitimes_logx_batch(D_x=100,x_gt0=1,times=10,b=100,iter=500,alpha=3e-1,beta=1e-1,lambda_w=1e-5,regenerate=False,heter_mean=True)
+    main_multilambda_logx_batch(D_x=100,x_gt0=1,times=10,b=100,iter=500,alpha=3e-1,beta=1e-1,lambda_w=[1e-7,1e-5,1e-3],regenerate=False,heter_mean=True)
