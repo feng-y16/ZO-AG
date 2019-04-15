@@ -23,7 +23,7 @@ def loss_function_index(delta,x,lambda_x,data,index):#compute loss for a dataset
     c=data[index,length-1]
     #print(delta)
     h=1.0/(1+np.exp(-a.dot(x+delta)))
-    value=c.dot(np.log(h+1e-15))+(1-c).dot(np.log(1-h+1e-15))/len(index)-lambda_x*np.linalg.norm(x,2)
+    value=(c.dot(np.log(h+1e-15))+(1-c).dot(np.log(1-h+1e-15)))/len(index)-lambda_x*np.linalg.norm(x,2)**2
     return value
 
 def acc_for_D(delta,x,lambda_x,data):#compute loss for a dataset
@@ -64,7 +64,7 @@ def loss_derivative_x(delta,x,lambda_x,data):
     a=data[:,0:length-1]
     c=data[:,length-1]
     h=1.0/(1+np.exp(-a.dot(x+delta)))
-    derivative=-(((h-c).T).dot(a)).T/num-2*lambda_x*x/(np.linalg.norm(x,2)+1e-15)
+    derivative=-(((h-c).T).dot(a)).T/num-2*lambda_x*x
     #print(derivative)
     return derivative
 
@@ -75,7 +75,7 @@ def loss_derivative_x_index(delta,x,lambda_x,data,index):
     a=data[:,0:length-1]
     c=data[:,length-1]
     h=1.0/(1+np.exp(-a.dot(x+delta)))
-    derivative=-(((h-c).T).dot(a)).T/len(index)-2*lambda_x*x/(np.linalg.norm(x,2)+1e-15)
+    derivative=-(((h-c).T).dot(a)).T/len(index)-2*lambda_x*x
     #print(derivative)
     return derivative
 
